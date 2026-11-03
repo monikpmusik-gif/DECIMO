@@ -16,6 +16,12 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
 @media print{.nav,.toast,.action-row,.answer-row,.lab-tabs,.lab-controls,.print-btn,.stepper,dialog,.footer button{display:none!important}body{background:white;font-size:10pt}.wrap{max-width:none;padding:0}.hero{padding:12px 0;background:white}.hero-grid{grid-template-columns:1.4fr 1fr}h1{font-size:30pt}.topbar{background:white;color:#17404a}.hero-art{padding:5px}.hero-art svg{max-height:180px}.safety{margin:15px 0;padding:12px}.section-head{margin-bottom:12px}.card{box-shadow:none;break-inside:avoid;padding:16px}.guided,.practice,.lab-card{padding:0}.exercise-head{padding:15px}.workflow{padding:15px}.lab-layout{grid-template-columns:1fr}.lab-scene>svg{max-height:270px}.lab-bottom{padding:15px}.notebook-prompts{display:flex}.lab-scene{padding:15px}.guided-visual,.practice-visual{padding:12px}.guided-visual svg,.practice-visual svg{max-height:200px}section{padding-top:25px}.variables{grid-template-columns:1fr 1fr 1fr}.conversion{grid-column:auto}.footer{margin-top:20px}.materials-layout{grid-template-columns:1.3fr 1fr}a{color:inherit;text-decoration:none}.hero-sub{font-size:12pt}.step-panel{min-height:0}}
 </style>
+
+<style id="decimo-home-style">
+#decimo-home-link{position:fixed;left:18px;bottom:18px;z-index:10000;display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border:2px solid #fff;border-radius:50px;background:#0f6b78;color:#fff;font:700 15px/1.3 "Segoe UI",Calibri,sans-serif;text-decoration:none;box-shadow:0 4px 18px #173c5040;min-height:46px}
+#decimo-home-link:hover{background:#104c58}#decimo-home-link:focus-visible{outline:3px solid #f2b84b;outline-offset:4px}
+body{padding-bottom:84px!important}@media print{#decimo-home-link{display:none}body{padding-bottom:0!important}}
+</style>
 </head>
 <body>
 <a class="skip" href="#teoria">Ir al contenido</a>
@@ -206,5 +212,6 @@ document.querySelectorAll('[data-material]').forEach(el=>{el.checked=!!state.mat
 $('print-page').addEventListener('click',()=>window.print());$('reset-all').addEventListener('click',()=>$('reset-dialog').showModal());$('cancel-reset').addEventListener('click',()=>$('reset-dialog').close());$('confirm-reset').addEventListener('click',()=>{try{localStorage.removeItem(KEY);}catch(e){}location.reload();});
 const sectionLinks=[...document.querySelectorAll('.nav a')];if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting)sectionLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+entry.target.id));},{rootMargin:'-15% 0px -65% 0px'});document.querySelectorAll('main section').forEach(section=>observer.observe(section));}
 </script>
+<a id="decimo-home-link" href="https://monikpmusik-gif.github.io/DECIMO/#actividades" aria-label="Volver al menú principal de actividades de décimo">← Volver al menú</a>
 </body>
 </html>

@@ -15,6 +15,12 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 @media print{.nav,.hero-art,.toast,.hero-actions,.btn,.steps,.lab-tabs{display:none!important}body{background:white;font-size:10pt}.wrap{width:100%}.institution,.equation-card,.lab-header,.answer-box{color:#163b42;background:#e9f3f1}.hero{padding:15px 0}.hero h1{font-size:26pt}.hero-grid{display:block}.card{box-shadow:none;break-inside:avoid}section{margin-top:22px}.guide-body,.lab-grid{grid-template-columns:1fr 1fr}.lab-panel[hidden]{display:block!important;margin-top:20px}.footer{padding:10px}.scene-svg{max-height:220px}.variables{grid-template-columns:repeat(5,1fr)}}
 </style>
+
+<style id="decimo-home-style">
+#decimo-home-link{position:fixed;left:18px;bottom:18px;z-index:10000;display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border:2px solid #fff;border-radius:50px;background:#0f6b78;color:#fff;font:700 15px/1.3 "Segoe UI",Calibri,sans-serif;text-decoration:none;box-shadow:0 4px 18px #173c5040;min-height:46px}
+#decimo-home-link:hover{background:#104c58}#decimo-home-link:focus-visible{outline:3px solid #f2b84b;outline-offset:4px}
+body{padding-bottom:84px!important}@media print{#decimo-home-link{display:none}body{padding-bottom:0!important}}
+</style>
 </head>
 <body>
 <a class="skip-link" href="#teoria">Ir al contenido</a>
@@ -134,5 +140,6 @@ $$('[data-material]').forEach(el=>el.addEventListener('change',()=>{state.materi
 const sectionObserver=new IntersectionObserver(entries=>{entries.filter(e=>e.isIntersecting).forEach(e=>{$$('.nav a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));});},{rootMargin:'-90px 0px -60% 0px',threshold:0});$$('main section').forEach(s=>sectionObserver.observe(s));
 initScenes();Object.keys(G).forEach(id=>{renderGuide(id);activateGuide(id,false);});Object.keys(P).forEach(updatePractice);Object.keys(labDefaults).forEach(id=>{updateLab(id);if(state.labs[id].done)$('#'+id+'-state').textContent='Recolección anterior restaurada. Puedes repetirla o ajustar los datos.';});updateMaterials();motionLabel();requestAnimationFrame(animate);
 </script>
+<a id="decimo-home-link" href="https://monikpmusik-gif.github.io/DECIMO/#actividades" aria-label="Volver al menú principal de actividades de décimo">← Volver al menú</a>
 </body>
 </html>
