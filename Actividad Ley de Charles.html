@@ -22,6 +22,35 @@
 #decimo-home-link:hover{background:#104c58}#decimo-home-link:focus-visible{outline:3px solid #f2b84b;outline-offset:4px}
 body{padding-bottom:84px!important}@media print{#decimo-home-link{display:none}body{padding-bottom:0!important}}
 </style>
+
+<style id="decimo-mobile-style">
+@media screen {
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+img,svg,canvas{max-width:100%}
+.grid>*,.hero-grid>*,.sim-grid>*,.guided-body>*,.guide-body>*,.practice>*,.practice-card>*,.problem>*,.theory-layout>*,.theory-row>*,.lab-layout>*,.lab-grid>*,.materials-layout>*,.variables>*,.data-grid>*,.sub-grid>*,.formula-grid>*{min-width:0}
+.nav-links{min-width:0;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+#decimo-home-link{left:max(12px,env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));max-width:calc(100% - 24px)}
+body:has(#decimo-home-link){padding-bottom:calc(84px + env(safe-area-inset-bottom))!important}
+}
+@media screen and (max-width:1024px), screen and (pointer:coarse){
+button,.btn,.open,.lab-tab,.step-button,.nav a,.nav-links a{min-height:44px;touch-action:manipulation}
+input:not([type=range]):not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px!important;max-width:100%;min-height:44px}
+input[type=range],.field input[type=range]{min-height:44px;touch-action:pan-y}
+.toast{bottom:calc(82px + env(safe-area-inset-bottom))}
+}
+@media screen and (max-width:820px){
+.guided-body,.guide-body,.practice,.practice-card,.problem,.theory-layout,.theory-row,.lab-layout,.lab-grid,.materials-layout{grid-template-columns:minmax(0,1fr)}
+.guide-work{border-right:0}.guided-visual,.practice-visual,.scene-panel{border-left:0}
+.math,.gs-math{max-width:100%;overflow-x:auto}
+}
+@media screen and (max-width:420px){
+.data-grid,.sub-grid,.lab-controls,.response-row,.formula-options,.stat-grid,.scene-readout,.gs-readings,.readout-grid,.meters{grid-template-columns:minmax(0,1fr)}
+.lab-tabs{display:flex;flex-wrap:wrap}.lab-tabs .lab-tab{flex:1 1 100%;font-size:14px}
+.nav-links{justify-content:flex-start!important}.nav a{flex-shrink:0}
+.section-head,.control-title,.range-title,.range-label{flex-wrap:wrap}
+h1,h2,h3,.description{overflow-wrap:break-word}
+}
+</style>
 </head>
 <body>
 <a class="skip" href="#teoria">Ir al contenido</a>
@@ -87,7 +116,7 @@ body{padding-bottom:84px!important}@media print{#decimo-home-link{display:none}b
 <g aria-hidden="true"><rect x="461" y="121" width="16" height="160" rx="8" fill="white" stroke="#789a9d" stroke-width="2"/><circle cx="469" cy="286" r="15" fill="white" stroke="#789a9d" stroke-width="2"/><rect id="thermo-fill" x="466" y="232" width="6" height="55" rx="3" fill="#0f8991"/><circle id="thermo-bulb" cx="469" cy="286" r="10" fill="#0f8991"/><path d="M482 127H489M482 163H489M482 199H489M482 235H489M482 271H489" stroke="#789a9d"/><text x="494" y="131" font-size="10" fill="#668589">80</text><text x="494" y="203" font-size="10" fill="#668589">40</text><text x="494" y="275" font-size="10" fill="#668589">0</text><text x="469" y="327" id="thermo-text" font-size="15" font-weight="700" text-anchor="middle" fill="#0f6b78">20 °C</text></g>
 </svg>
 <p class="scene-note" id="scene-note" aria-live="polite">A 20 °C, el globo está poco inflado. Prueba primero con el baño caliente.</p><div class="action-row"><button id="motion-toggle" class="btn ghost small-btn" type="button" aria-pressed="false">Pausar partículas</button><button id="reset-dent" class="btn secondary small-btn" type="button" hidden>Volver a abollar · 20 °C</button></div><p class="small muted" style="font-size:.7rem;margin-top:10px">Ilustración cualitativa. Partículas con movimiento aleatorio; se conserva su cantidad.</p>
-</div><div class="lab-controls"><div class="control-title"><label for="temperature">Temperatura del gas</label><div class="temp-entry"><input type="number" id="temperature-number" min="0" max="80" step="1" value="20" aria-label="Temperatura del gas en grados Celsius"><span>°C</span></div></div><input class="slider" type="range" id="temperature" min="0" max="80" step="1" value="20" aria-label="Cambiar temperatura de 0 a 80 grados Celsius"><div class="slider-labels"><span>0 °C · frío</span><span>80 °C · caliente</span></div><div class="preset-row"><button type="button" class="btn secondary" data-temp="0">Hielo · 0 °C</button><button type="button" class="btn secondary" data-temp="20">Ambiente · 20 °C</button><button type="button" class="btn secondary" data-temp="70">Caliente · 70 °C</button></div>
+</div><div class="lab-controls"><div class="control-title"><label for="temperature">Temperatura del gas</label><div class="temp-entry"><input type="number" id="temperature-number" min="0" max="80" step="1" value="20" aria-label="Temperatura del gas en grados Celsius" inputmode="decimal"><span>°C</span></div></div><input class="slider" type="range" id="temperature" min="0" max="80" step="1" value="20" aria-label="Cambiar temperatura de 0 a 80 grados Celsius"><div class="slider-labels"><span>0 °C · frío</span><span>80 °C · caliente</span></div><div class="preset-row"><button type="button" class="btn secondary" data-temp="0">Hielo · 0 °C</button><button type="button" class="btn secondary" data-temp="20">Ambiente · 20 °C</button><button type="button" class="btn secondary" data-temp="70">Caliente · 70 °C</button></div>
 <div class="stat-grid"><div class="stat"><small>TEMPERATURA ABSOLUTA</small><strong id="kelvin-readout">293,15 K</strong></div><div class="stat"><small>VOLUMEN DEL MODELO IDEAL</small><strong id="volume-readout">600,00 mL</strong></div></div>
 <p class="stat-model">Referencia independiente: 600 mL de gas a 20 °C, con P y n constantes. V = 600 × T(K) / 293,15. Este valor no es una medición del objeto dibujado.</p>
 <div class="chart-wrap"><h4>Modelo ideal · V es proporcional a T(K)</h4><svg viewBox="0 0 330 170" role="img" aria-labelledby="chart-title"><title id="chart-title">Gráfica de volumen frente a temperatura absoluta. El punto sigue una línea creciente.</title><g stroke="#e0e9e5" stroke-width="1"><path d="M47 25H310M47 74H310M47 125H310M83 20V125M172 20V125M263 20V125"/></g><path d="M47 17V125H312" fill="none" stroke="#829da0" stroke-width="1.5"/><g fill="#668187" font-size="10"><text x="39" y="128" text-anchor="end">540</text><text x="39" y="78" text-anchor="end">640</text><text x="39" y="28" text-anchor="end">740</text><text x="47" y="144" text-anchor="middle">270</text><text x="136" y="144" text-anchor="middle">300</text><text x="225" y="144" text-anchor="middle">330</text><text x="309" y="144" text-anchor="middle">360</text><text x="11" y="12">V (mL)</text><text x="270" y="164">T (K)</text></g><path id="charles-line" d="M47 119L310 27" fill="none" stroke="#1b998e" stroke-width="3"/><path id="chart-guide" d="" stroke="#b59035" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/><circle id="chart-dot" cx="114" cy="95" r="6" fill="#f2b84b" stroke="#fff" stroke-width="2"/></svg><p class="small muted" style="font-size:.7rem">Ventana ampliada: los ejes no comienzan en cero.</p></div>
