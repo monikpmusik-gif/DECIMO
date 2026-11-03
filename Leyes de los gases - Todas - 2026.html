@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Laboratorio interactivo para aprender las leyes de Boyle, Gay-Lussac, Charles y los gases ideales.">
+  <title>Laboratorio de Gases | Química interactiva</title>
+  <style>
+    :root {
+      --bg: #070b16;
+      --panel: #10182b;
+      --panel-2: #151f37;
+      --ink: #f3f7ff;
+      --muted: #aab7d2;
+      --line: #2b3959;
+      --cyan: #4ee6d8;
+      --blue: #70a8ff;
+      --coral: #ff7b72;
+      --yellow: #ffd166;
+      --green: #69e49b;
+      --danger: #ff8b91;
+      --radius: 22px;
+      --shadow: 0 20px 55px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .16;
+      background-image: radial-gradient(circle at center, #ffffff 1px, transparent 1.2px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, #000, transparent 80%);
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 12px clamp(16px, 4vw, 56px);
+      background: rgba(7, 11, 22, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+      font-weight: 850;
+      letter-spacing: -.02em;
+      text-decoration: none;
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--cyan);
+      border-radius: 13px;
+      color: var(--cyan);
+      background: #0b2630;
+      box-shadow: 0 0 24px rgba(78, 230, 216, .16);
+    }
+    .session-nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 2px;
+      margin-left: auto;
+    }
+    .session-nav::-webkit-scrollbar { display: none; }
+    .session-nav a {
+      white-space: nowrap;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .9rem;
+      font-weight: 750;
+      padding: 9px 13px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+    }
+    .session-nav a:hover, .session-nav a.active {
+      color: var(--ink);
+      border-color: var(--line);
+      background: var(--panel-2);
+    }
+
+    main { overflow: hidden; }
+    .hero, .session {
+      width: min(1180px, calc(100% - 32px));
+      margin-inline: auto;
+    }
+    .hero {
+      min-height: 68vh;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: clamp(30px, 6vw, 80px);
+      align-items: center;
+      padding: 76px 0 64px;
+    }
+    .kicker, .session-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      font-weight: 850;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: .78rem;
+    }
+    .kicker::before, .session-tag::before {
+      content: "";
+      width: 28px;
+      height: 3px;
+      border-radius: 9px;
+      background: currentColor;
+    }
+    h1 {
+      max-width: 780px;
+      margin: 18px 0 20px;
+      font-size: clamp(3.15rem, 8vw, 7rem);
+      line-height: .92;
+      letter-spacing: -.07em;
+    }
+    h1 .accent { color: var(--cyan); }
+    .lead {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.26rem);
+    }
+    .teacher-name {
+      margin: 10px 0 0;
+      color: var(--yellow);
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .btn {
+      border: 1px solid var(--cyan);
+      border-radius: 14px;
+      padding: 12px 18px;
+      color: #041517;
+      background: var(--cyan);
+      font-weight: 850;
+      text-decoration: none;
+      box-shadow: 0 10px 24px rgba(78, 230, 216, .12);
+    }
+    .btn.secondary { color: var(--ink); background: transparent; border-color: var(--line); }
+    .hero-visual {
+      position: relative;
+      min-height: 390px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 40px;
+      background: #0d1426;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .molecule {
+      position: relative;
+      width: 250px;
+      aspect-ratio: 1;
+      border: 1px solid #284568;
+      border-radius: 50%;
+      animation: orbit 18s linear infinite;
+    }
+    .molecule::before, .molecule::after {
+      content: "";
+      position: absolute;
+      inset: 38px -28px;
+      border: 2px solid #2c5d70;
+      border-radius: 50%;
+      transform: rotate(58deg);
+    }
+    .molecule::after { transform: rotate(-58deg); }
+    .nucleus {
+      position: absolute;
+      inset: 50%;
+      width: 92px;
+      height: 92px;
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #061217;
+      background: var(--cyan);
+      font-size: 1.45rem;
+      font-weight: 900;
+      box-shadow: 0 0 45px rgba(78, 230, 216, .32);
+    }
+    .electron {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--coral);
+      box-shadow: 0 0 18px rgba(255, 123, 114, .7);
+    }
+    .e1 { top: 2px; left: 116px; }
+    .e2 { bottom: 20px; left: -13px; }
+    .e3 { bottom: 20px; right: -13px; }
+    @keyframes orbit { to { transform: rotate(360deg); } }
+    .hero-metric {
+      position: absolute;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--muted);
+      background: #111c33;
+      font-size: .84rem;
+      font-weight: 750;
+    }
+    .hero-metric strong { color: var(--ink); display: block; font-size: 1rem; }
+    .metric-a { top: 26px; left: 24px; }
+    .metric-b { right: 24px; bottom: 26px; }
+
+    .session {
+      padding: 84px 0;
+      border-top: 1px solid rgba(43, 57, 89, .7);
+    }
+    .section-head {
+      display: grid;
+      grid-template-columns: 1fr minmax(260px, .65fr);
+      gap: 36px;
+      align-items: end;
+      margin-bottom: 36px;
+    }
+    h2 {
+      margin: 10px 0 0;
+      font-size: clamp(2.15rem, 5vw, 4.8rem);
+      line-height: 1;
+      letter-spacing: -.055em;
+    }
+    .section-intro { color: var(--muted); margin: 0; }
+    h3 { margin: 0 0 10px; font-size: 1.35rem; line-height: 1.25; }
+    h4 { margin: 0 0 8px; font-size: 1.05rem; }
+    p { margin-top: 0; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .concept-card, .panel, .exercise-card, .why-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+    .concept-card { padding: 22px; min-height: 210px; }
+    .concept-icon {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 22px;
+      border-radius: 15px;
+      color: #07131b;
+      background: var(--cyan);
+      font-size: 1.45rem;
+      font-weight: 900;
+    }
+    .concept-card:nth-child(2) .concept-icon { background: var(--blue); }
+    .concept-card:nth-child(3) .concept-icon { background: var(--coral); }
+    .concept-card:nth-child(4) .concept-icon { background: var(--yellow); }
+    .concept-card p { color: var(--muted); }
+    .mini-formula { color: var(--cyan); font-weight: 800; font-size: .9rem; }
+    .lab-grid, .law-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .panel { padding: clamp(20px, 3vw, 32px); overflow: hidden; }
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+    .panel-head p { color: var(--muted); margin: 0; font-size: .93rem; }
+    .status-pill, .law-badge {
+      flex: 0 0 auto;
+      padding: 7px 11px;
+      border: 1px solid #31576a;
+      border-radius: 999px;
+      color: var(--cyan);
+      background: #0a252c;
+      font-size: .78rem;
+      font-weight: 850;
+    }
+    .formula-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 22px 0;
+      padding: 16px 18px;
+      border-left: 4px solid var(--cyan);
+      border-radius: 0 16px 16px 0;
+      background: #0b2130;
+    }
+    .formula-strip .formula { color: var(--cyan); font-size: 1.35rem; font-weight: 900; }
+    .formula-strip span:last-child { color: var(--muted); }
+    .law-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .law-summary div {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #0c1426;
+    }
+    .law-summary small { display: block; color: var(--muted); }
+    .law-summary strong { color: var(--cyan); }
+
+    .control-stack { display: grid; gap: 18px; }
+    .range-row { display: grid; gap: 7px; }
+    .range-label { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-size: .9rem; }
+    .range-label output { color: var(--ink); font-weight: 850; }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan);
+      cursor: ew-resize;
+    }
+    .readout-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+    .readout {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #0a1120;
+      text-align: center;
+    }
+    .readout small { display: block; color: var(--muted); }
+    .readout strong { color: var(--yellow); font-size: 1.1rem; }
+    .sim-stage {
+      position: relative;
+      min-height: 260px;
+      display: grid;
+      place-items: center;
+      margin: 18px 0;
+      border: 1px dashed #365071;
+      border-radius: 22px;
+      background: #080f1e;
+      overflow: hidden;
+    }
+    .particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px rgba(78, 230, 216, .65);
+      animation: particle-drift 2.7s ease-in-out infinite alternate;
+    }
+    @keyframes particle-drift {
+      0% { transform: translate(0, 0) scale(.9); }
+      32% { transform: translate(var(--dx-1), var(--dy-1)) scale(1); }
+      68% { transform: translate(var(--dx-2), var(--dy-2)) scale(.82); }
+      100% { transform: translate(var(--dx-3), var(--dy-3)) scale(1.08); }
+    }
+
+    .syringe {
+      position: relative;
+      width: min(92%, 500px);
+      height: 104px;
+      touch-action: none;
+    }
+    .syringe-barrel {
+      position: absolute;
+      left: 0;
+      right: 48px;
+      top: 20px;
+      height: 64px;
+      border: 4px solid #89a6c8;
+      border-radius: 18px 5px 5px 18px;
+      background: rgba(112, 168, 255, .08);
+      overflow: hidden;
+    }
+    .syringe-tip {
+      position: absolute;
+      right: 4px;
+      top: 46px;
+      width: 46px;
+      height: 12px;
+      border: 3px solid #89a6c8;
+      border-left: 0;
+    }
+    .gas-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--gas-width, 60%);
+      background: rgba(78, 230, 216, .13);
+      transition: width .12s linear;
+    }
+    .plunger {
+      position: absolute;
+      left: var(--plunger, 60%);
+      top: 10px;
+      width: 16px;
+      height: 84px;
+      border: 3px solid var(--coral);
+      border-radius: 8px;
+      background: #351a25;
+      transform: translateX(-8px);
+      cursor: ew-resize;
+      z-index: 3;
+    }
+    .plunger::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 35px;
+      width: 90px;
+      height: 8px;
+      background: var(--coral);
+      border-radius: 9px;
+    }
+    .balloon-wrap { position: relative; width: 240px; height: 220px; display: grid; place-items: center; }
+    .balloon {
+      width: var(--balloon-size, 132px);
+      height: calc(var(--balloon-size, 132px) * 1.1);
+      border-radius: 52% 52% 48% 48%;
+      border: 3px solid #ffaca6;
+      background: rgba(255, 123, 114, .55);
+      box-shadow: inset -16px -14px 0 rgba(102, 29, 45, .18), 0 0 35px rgba(255, 123, 114, .2);
+      transition: width .35s ease, height .35s ease;
+    }
+    .balloon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 20px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 18px solid #ff8b85;
+      transform: translateX(-50%);
+    }
+    .heat-meter {
+      position: absolute;
+      right: 10px;
+      top: 22px;
+      bottom: 22px;
+      width: 14px;
+      border: 2px solid var(--line);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .heat-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: var(--coral); transition: height .2s; }
+    .tire {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      border: 34px solid #28354e;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 8px #526783, 0 16px 40px rgba(0,0,0,.3);
+      transition: border-width .3s, transform .3s;
+    }
+    .tire::after { content: ""; position: absolute; inset: -28px; border: 3px dashed #7084a2; border-radius: 50%; }
+    .gauge {
+      position: absolute;
+      right: 28px;
+      bottom: 24px;
+      width: 88px;
+      height: 50px;
+      border: 4px solid #91a6c4;
+      border-bottom: 0;
+      border-radius: 90px 90px 0 0;
+      background: #10182b;
+    }
+    .needle {
+      position: absolute;
+      left: 40px;
+      bottom: 0;
+      width: 4px;
+      height: 37px;
+      border-radius: 5px;
+      background: var(--yellow);
+      transform-origin: 50% 100%;
+      transform: rotate(-60deg);
+      transition: transform .25s;
+    }
+    .ideal-box {
+      position: relative;
+      width: var(--box-width, 76%);
+      height: 180px;
+      border: 4px solid var(--blue);
+      border-radius: 14px;
+      background: rgba(112, 168, 255, .06);
+      transition: width .3s ease;
+      overflow: hidden;
+    }
+    .ideal-box::before {
+      content: "V";
+      position: absolute;
+      right: 10px;
+      top: 7px;
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .chart-wrap {
+      position: relative;
+      min-height: 310px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #08101f;
+    }
+    canvas.chart { display: block; width: 100%; height: 290px; }
+    .graph-readout { color: var(--cyan); font-weight: 800; text-align: center; min-height: 26px; margin: 10px 0 0; }
+
+    .exercise-section { margin-top: 52px; }
+    .exercise-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .exercise-heading p { margin: 0; color: var(--muted); }
+    .progress-box { min-width: 190px; text-align: right; color: var(--muted); font-size: .9rem; }
+    .progress-track { height: 8px; margin-top: 7px; border-radius: 99px; background: #202d48; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: var(--green); transition: width .3s; }
+    .exercise-group { margin-top: 28px; }
+    .exercise-group-title {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 0 0 14px;
+      color: var(--yellow);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .exercise-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .exercise-card { padding: 22px; box-shadow: none; }
+    .exercise-card.solved { border-color: #31576a; background: #0b1c2a; }
+    .exercise-card.correct { border-color: var(--green); }
+    .exercise-card.incorrect { border-color: var(--danger); }
+    .exercise-top { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+    .exercise-top h4 { flex: 1 1 145px; }
+    .exercise-number {
+      flex: 0 0 34px;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      color: #06171b;
+      background: var(--cyan);
+      font-weight: 900;
+    }
+    .exercise-icon { font-size: 2rem; filter: saturate(.8); }
+    .target-chip {
+      align-self: center;
+      padding: 4px 9px;
+      border: 1px solid #465a7d;
+      border-radius: 999px;
+      color: var(--yellow);
+      background: #221d11;
+      font-size: .76rem;
+      font-weight: 850;
+      white-space: nowrap;
+      margin-left: auto;
+    }
+    .problem { margin: 14px 0; color: #dbe5f9; }
+    .steps {
+      margin: 14px 0 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: var(--muted);
+      background: #08111f;
+    }
+    .steps strong { color: var(--cyan); }
+    .steps ol { margin: 8px 0 0; padding-left: 22px; }
+    .answer-row { display: flex; gap: 9px; margin-top: 14px; }
+    .answer-wrap { position: relative; flex: 1; }
+    .answer-wrap input {
+      width: 100%;
+      padding: 12px 66px 12px 13px;
+      border: 1px solid #405071;
+      border-radius: 12px;
+      color: var(--ink);
+      background: #080f1c;
+    }
+    .answer-wrap .unit {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: .84rem;
+    }
+    .check-btn {
+      padding: 11px 15px;
+      border: 1px solid var(--blue);
+      border-radius: 12px;
+      color: var(--ink);
+      background: #17325b;
+      font-weight: 800;
+    }
+    .feedback { min-height: 26px; margin: 11px 0 0; font-weight: 750; }
+    .feedback.good { color: var(--green); }
+    .feedback.bad { color: var(--danger); }
+    .hint {
+      display: none;
+      margin-top: 12px;
+      padding: 14px;
+      border-left: 3px solid var(--yellow);
+      border-radius: 0 12px 12px 0;
+      color: #dce4f5;
+      background: #261f12;
+    }
+    .hint.open { display: block; animation: reveal .24s ease both; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(-5px); } }
+
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+    .why-card { padding: 24px; }
+    .why-card p, .unit-table td { color: var(--muted); }
+    .unit-table { width: 100%; border-collapse: collapse; }
+    .unit-table th, .unit-table td { padding: 12px; border-bottom: 1px solid var(--line); text-align: left; }
+    .unit-table th { color: var(--cyan); }
+    .note {
+      padding: 15px 18px;
+      border: 1px solid #584e2a;
+      border-radius: 15px;
+      color: #f8e6aa;
+      background: #241f12;
+    }
+    footer {
+      padding: 50px 16px 70px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      text-align: center;
+    }
+    footer strong { color: var(--cyan); }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 54px; }
+      .hero-visual { min-height: 330px; }
+      .section-head { grid-template-columns: 1fr; gap: 15px; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .lab-grid, .law-grid { grid-template-columns: 1fr; }
+      .topbar { display: block; padding-block: 9px; }
+      .brand { margin-bottom: 8px; }
+      .session-nav { margin-left: 0; }
+    }
+    @media (max-width: 620px) {
+      .hero, .session { width: min(100% - 22px, 1180px); }
+      .hero { padding-top: 40px; }
+      h1 { font-size: clamp(3rem, 17vw, 5rem); }
+      .hero-visual { min-height: 290px; }
+      .molecule { width: 180px; }
+      .nucleus { width: 72px; height: 72px; font-size: 1.1rem; }
+      .e1 { left: 81px; }
+      .grid-4, .exercise-grid, .why-grid { grid-template-columns: 1fr; }
+      .concept-card { min-height: auto; }
+      .law-summary { grid-template-columns: 1fr; }
+      .readout-grid { grid-template-columns: 1fr 1fr; }
+      .exercise-heading { display: block; }
+      .progress-box { text-align: left; margin-top: 14px; }
+      .answer-row { align-items: stretch; }
+      .answer-row .check-btn { padding-inline: 11px; }
+      .panel { padding: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Ir al inicio">
+      <span class="brand-mark">PV</span>
+      <span>GasLab</span>
+    </a>
+    <nav class="session-nav" aria-label="Navegación por sesiones">
+      <a href="#sesion-1">01 · Variables</a>
+      <a href="#sesion-2">02 · Boyle</a>
+      <a href="#sesion-3">03 · Gay-Lussac</a>
+      <a href="#sesion-4">04 · Charles</a>
+      <a href="#sesion-5">05 · Gas ideal</a>
+    </nav>
+  </header>
+
+  <main id="inicio">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <span class="kicker">Laboratorio digital · Química</span>
+        <p class="teacher-name">Profesora: Mónica Pérez</p>
+        <h1 id="hero-title">Explora el <span class="accent">mundo</span> de los gases.</h1>
+        <p class="lead">Modifica presión, volumen, temperatura y cantidad de gas. Observa qué ocurre, interpreta las gráficas y comprueba tus resultados en 40 desafíos.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#sesion-1">Comenzar exploración</a>
+          <a class="btn secondary" href="#sesion-2">Ir a los simuladores</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Representación animada de partículas">
+        <div class="hero-metric metric-a"><strong>4 leyes</strong>conectadas</div>
+        <div class="molecule" aria-hidden="true">
+          <span class="electron e1"></span><span class="electron e2"></span><span class="electron e3"></span>
+          <span class="nucleus">PV</span>
+        </div>
+        <div class="hero-metric metric-b"><strong>40 retos</strong>con feedback</div>
+      </div>
+    </section>
+
+    <section class="session" id="sesion-1" data-section>
+      <div class="section-head">
+        <div>
+          <span class="session-tag">Sesión 01</span>
+          <h2>Variables y conceptos básicos</h2>
+        </div>
+        <p class="section-intro">Un gas cambia cuando modificamos las condiciones de su entorno. Estas cuatro variables permiten describir su estado.</p>
+      </div>
+
+      <div class="grid-4">
+        <article class="concept-card">
+          <div class="concept-icon">P</div>
+          <h3>Presión</h3>
+          <p>Resultado de los choques de las partículas contra las paredes del recipiente.</p>
+          <span class="mini-formula">atm · kPa · mmHg</span>
+        </article>
+        <article class="concept-card">
+          <div class="concept-icon">V</div>
+          <h3>Volumen</h3>
+          <p>Espacio disponible para el movimiento de las partículas del gas.</p>
+          <span class="mini-formula">L · mL · cm³</span>
+        </article>
+        <article class="concept-card">
+          <div class="concept-icon">T</div>
+          <h3>Temperatura</h3>
+          <p>Mide la energía cinética promedio. En las fórmulas siempre se usa kelvin.</p>
+          <span class="mini-formula">K = °C + 273,15</span>
+        </article>
+        <article class="concept-card">
+          <div class="concept-icon">n</div>
+          <h3>Cantidad de gas</h3>
+          <p>Indica cuántas partículas hay, expresadas como cantidad de sustancia.</p>
+          <span class="mini-formula">1 mol = 6,022 × 10²³</span>
+        </article>
+      </div>
+
+      <div class="lab-grid">
+        <article class="panel">
+          <div class="panel-head">
+            <div><h3>Laboratorio de variables</h3><p>Cambia tres variables y descubre cómo responde la presión.</p></div>
+            <span class="status-pill">PV = nRT</span>
+          </div>
+          <div class="control-stack">
+            <label class="range-row">
+              <span class="range-label"><span>Temperatura</span><output id="intro-t-out">300 K</output></span>
+              <input id="intro-t" type="range" min="200" max="500" value="300" aria-label="Temperatura del laboratorio de variables">
+            </label>
+            <label class="range-row">
+              <span class="range-label"><span>Volumen</span><output id="intro-v-out">18 L</output></span>
+              <input id="intro-v" type="range" min="6" max="30" value="18" aria-label="Volumen del laboratorio de variables">
+            </label>
+            <label class="range-row">
+              <span class="range-label"><span>Moles</span><output id="intro-n-out">1,0 mol</output></span>
+              <input id="intro-n" type="range" min="2" max="30" value="10" aria-label="Cantidad de gas del laboratorio de variables">
+            </label>
+          </div>
+          <div class="readout-grid">
+            <div class="readout"><small>Presión calculada</small><strong id="intro-p">1,37 atm</strong></div>
+            <div class="readout"><small>Choques</small><strong id="intro-collisions">Medios</strong></div>
+            <div class="readout"><small>Estado</small><strong id="intro-state">Estable</strong></div>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-head">
+            <div><h3>Partículas en acción</h3><p>Más partículas o más temperatura elevan la frecuencia de choques.</p></div>
+          </div>
+          <div class="sim-stage">
+            <div class="ideal-box" id="intro-box" style="--box-width:68%">
+              <div class="particles" id="intro-particles"></div>
+            </div>
+          </div>
+          <div class="note">Observa: aumentar el volumen ofrece más espacio y reduce la presión si las demás variables permanecen constantes.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="session" id="sesion-2" data-section>
+      <div class="section-head">
+        <div><span class="session-tag">Sesión 02</span><h2>Ley de Boyle</h2></div>
+        <p class="section-intro">A temperatura y cantidad constantes, la presión y el volumen cambian en sentido contrario.</p>
+      </div>
+      <div class="formula-strip"><span class="formula">P₁V₁ = P₂V₂</span><span>Relación inversamente proporcional: si V disminuye, P aumenta.</span></div>
+      <div class="law-summary">
+        <div><small>Constantes</small><strong>T y n</strong></div>
+        <div><small>Variable independiente</small><strong>Volumen</strong></div>
+        <div><small>Respuesta</small><strong>Presión</strong></div>
+      </div>
+      <div class="law-grid">
+        <article class="panel">
+          <div class="panel-head"><div><h3>Jeringa de Boyle</h3><p>Arrastra el émbolo o usa el control para comprimir el gas.</p></div><span class="law-badge">T constante</span></div>
+          <div class="sim-stage">
+            <div class="syringe" id="syringe">
+              <div class="syringe-barrel"><div class="gas-fill" id="syringe-gas"><div class="particles" id="boyle-particles"></div></div></div>
+              <div class="plunger" id="plunger" role="slider" tabindex="0" aria-label="Émbolo de la jeringa" aria-valuemin="20" aria-valuemax="100" aria-valuenow="60"></div>
+              <div class="syringe-tip"></div>
+            </div>
+          </div>
+          <label class="range-row">
+            <span class="range-label"><span>Volumen de la jeringa</span><output id="boyle-v-out">60 mL</output></span>
+            <input id="boyle-v" type="range" min="20" max="100" value="60" aria-label="Volumen de la jeringa">
+          </label>
+          <div class="readout-grid">
+            <div class="readout"><small>V</small><strong id="boyle-vol">60 mL</strong></div>
+            <div class="readout"><small>P</small><strong id="boyle-pres">1,20 atm</strong></div>
+            <div class="readout"><small>P × V</small><strong>72 atm·mL</strong></div>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h3>Gráfica P–V</h3><p>Explora la curva hiperbólica. El punto muestra el estado actual.</p></div><span class="law-badge">P ∝ 1/V</span></div>
+          <div class="chart-wrap"><canvas class="chart" id="chart-boyle" aria-label="Gráfica interactiva de presión contra volumen"></canvas></div>
+          <label class="range-row">
+            <span class="range-label"><span>Punto sobre la curva</span><output id="graph-boyle-out">V = 60 mL</output></span>
+            <input class="graph-control" data-chart="boyle" id="graph-boyle" type="range" min="20" max="100" value="60" aria-label="Explorar gráfica de Boyle">
+          </label>
+          <p class="graph-readout" id="readout-boyle"></p>
+        </article>
+      </div>
+      <div class="exercise-section" data-law="boyle"></div>
+    </section>
+
+    <section class="session" id="sesion-3" data-section>
+      <div class="section-head">
+        <div><span class="session-tag">Sesión 03</span><h2>Ley de Gay-Lussac</h2></div>
+        <p class="section-intro">En un recipiente rígido, la presión aumenta cuando sube la temperatura absoluta.</p>
+      </div>
+      <div class="formula-strip"><span class="formula">P₁/T₁ = P₂/T₂</span><span>Relación directamente proporcional. Usa siempre la temperatura en kelvin.</span></div>
+      <div class="law-summary">
+        <div><small>Constantes</small><strong>V y n</strong></div>
+        <div><small>Variable independiente</small><strong>Temperatura</strong></div>
+        <div><small>Respuesta</small><strong>Presión</strong></div>
+      </div>
+      <div class="law-grid">
+        <article class="panel">
+          <div class="panel-head"><div><h3>Llanta bajo temperatura</h3><p>Modifica la temperatura y observa el manómetro.</p></div><span class="law-badge">V constante</span></div>
+          <div class="sim-stage">
+            <div class="tire" id="tire"></div>
+            <div class="gauge" aria-hidden="true"><div class="needle" id="tire-needle"></div></div>
+          </div>
+          <label class="range-row">
+            <span class="range-label"><span>Temperatura</span><output id="gay-t-out">293 K</output></span>
+            <input id="gay-t" type="range" min="250" max="380" value="293" aria-label="Temperatura de la llanta">
+          </label>
+          <div class="readout-grid">
+            <div class="readout"><small>T</small><strong id="gay-temp">293 K</strong></div>
+            <div class="readout"><small>P</small><strong id="gay-pres">210 kPa</strong></div>
+            <div class="readout"><small>P/T</small><strong>0,717 kPa/K</strong></div>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h3>Gráfica P–T</h3><p>La recta muestra que ambas variables aumentan juntas.</p></div><span class="law-badge">P ∝ T</span></div>
+          <div class="chart-wrap"><canvas class="chart" id="chart-gay" aria-label="Gráfica interactiva de presión contra temperatura"></canvas></div>
+          <label class="range-row">
+            <span class="range-label"><span>Punto sobre la recta</span><output id="graph-gay-out">T = 293 K</output></span>
+            <input class="graph-control" data-chart="gay" id="graph-gay" type="range" min="250" max="380" value="293" aria-label="Explorar gráfica de Gay-Lussac">
+          </label>
+          <p class="graph-readout" id="readout-gay"></p>
+        </article>
+      </div>
+      <div class="exercise-section" data-law="gay"></div>
+    </section>
+
+    <section class="session" id="sesion-4" data-section>
+      <div class="section-head">
+        <div><span class="session-tag">Sesión 04</span><h2>Ley de Charles</h2></div>
+        <p class="section-intro">A presión constante, el volumen de un gas aumenta al elevar su temperatura absoluta.</p>
+      </div>
+      <div class="formula-strip"><span class="formula">V₁/T₁ = V₂/T₂</span><span>Relación directamente proporcional. El recipiente debe poder expandirse.</span></div>
+      <div class="law-summary">
+        <div><small>Constantes</small><strong>P y n</strong></div>
+        <div><small>Variable independiente</small><strong>Temperatura</strong></div>
+        <div><small>Respuesta</small><strong>Volumen</strong></div>
+      </div>
+      <div class="law-grid">
+        <article class="panel">
+          <div class="panel-head"><div><h3>Globo térmico</h3><p>Calienta o enfría el gas y observa el cambio de tamaño.</p></div><span class="law-badge">P constante</span></div>
+          <div class="sim-stage">
+            <div class="balloon-wrap"><div class="balloon" id="balloon"></div><div class="heat-meter"><div class="heat-fill" id="heat-fill"></div></div></div>
+          </div>
+          <label class="range-row">
+            <span class="range-label"><span>Temperatura</span><output id="charles-t-out">300 K</output></span>
+            <input id="charles-t" type="range" min="220" max="420" value="300" aria-label="Temperatura del globo">
+          </label>
+          <div class="readout-grid">
+            <div class="readout"><small>T</small><strong id="charles-temp">300 K</strong></div>
+            <div class="readout"><small>V</small><strong id="charles-vol">2,40 L</strong></div>
+            <div class="readout"><small>V/T</small><strong>0,008 L/K</strong></div>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h3>Gráfica V–T</h3><p>La línea revela el crecimiento uniforme del volumen.</p></div><span class="law-badge">V ∝ T</span></div>
+          <div class="chart-wrap"><canvas class="chart" id="chart-charles" aria-label="Gráfica interactiva de volumen contra temperatura"></canvas></div>
+          <label class="range-row">
+            <span class="range-label"><span>Punto sobre la recta</span><output id="graph-charles-out">T = 300 K</output></span>
+            <input class="graph-control" data-chart="charles" id="graph-charles" type="range" min="220" max="420" value="300" aria-label="Explorar gráfica de Charles">
+          </label>
+          <p class="graph-readout" id="readout-charles"></p>
+        </article>
+      </div>
+      <div class="exercise-section" data-law="charles"></div>
+    </section>
+
+    <section class="session" id="sesion-5" data-section>
+      <div class="section-head">
+        <div><span class="session-tag">Sesión 05</span><h2>Gases ideales</h2></div>
+        <p class="section-intro">Una sola ecuación conecta las cuatro variables del estado gaseoso y permite predecir su comportamiento.</p>
+      </div>
+      <div class="why-grid">
+        <article class="why-card">
+          <h3>¿Por qué gases ideales?</h3>
+          <p>El modelo supone partículas con volumen despreciable, sin fuerzas de atracción entre sí y con choques perfectamente elásticos. Los gases reales se aproximan mejor a este comportamiento a baja presión y alta temperatura.</p>
+          <div class="formula-strip"><span class="formula">PV = nRT</span><span>R = 0,082057 L·atm·mol⁻¹·K⁻¹</span></div>
+        </article>
+        <article class="why-card">
+          <h3>Variables y unidades</h3>
+          <table class="unit-table">
+            <thead><tr><th>Variable</th><th>Significado</th><th>Unidad</th></tr></thead>
+            <tbody>
+              <tr><td>P</td><td>Presión</td><td>atm</td></tr>
+              <tr><td>V</td><td>Volumen</td><td>L</td></tr>
+              <tr><td>n</td><td>Cantidad</td><td>mol</td></tr>
+              <tr><td>T</td><td>Temperatura</td><td>K</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+      <div class="law-grid">
+        <article class="panel">
+          <div class="panel-head"><div><h3>Contenedor ideal</h3><p>Ajusta n, T y V. La presión se calcula en tiempo real.</p></div><span class="law-badge">PV = nRT</span></div>
+          <div class="sim-stage"><div class="ideal-box" id="ideal-box"><div class="particles" id="ideal-particles"></div></div></div>
+          <div class="control-stack">
+            <label class="range-row"><span class="range-label"><span>Moles</span><output id="ideal-n-out">1,0 mol</output></span><input id="ideal-n" type="range" min="5" max="30" value="10" aria-label="Moles en el contenedor"></label>
+            <label class="range-row"><span class="range-label"><span>Temperatura</span><output id="ideal-t-out">300 K</output></span><input id="ideal-t" type="range" min="200" max="500" value="300" aria-label="Temperatura del contenedor"></label>
+            <label class="range-row"><span class="range-label"><span>Volumen</span><output id="ideal-v-out">18 L</output></span><input id="ideal-v" type="range" min="5" max="30" value="18" aria-label="Volumen del contenedor"></label>
+          </div>
+          <div class="readout-grid">
+            <div class="readout"><small>Presión</small><strong id="ideal-p">1,37 atm</strong></div>
+            <div class="readout"><small>Partículas</small><strong id="ideal-count">10</strong></div>
+            <div class="readout"><small>Constante R</small><strong>0,082057</strong></div>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h3>Gráfica P–V del gas ideal</h3><p>Para n y T fijos, la ecuación ideal produce una curva inversa.</p></div><span class="law-badge">n = 1 mol · T = 300 K</span></div>
+          <div class="chart-wrap"><canvas class="chart" id="chart-ideal" aria-label="Gráfica interactiva del gas ideal"></canvas></div>
+          <label class="range-row">
+            <span class="range-label"><span>Punto sobre la curva</span><output id="graph-ideal-out">V = 18 L</output></span>
+            <input class="graph-control" data-chart="ideal" id="graph-ideal" type="range" min="5" max="35" value="18" aria-label="Explorar gráfica del gas ideal">
+          </label>
+          <p class="graph-readout" id="readout-ideal"></p>
+          <div class="note">Antes de usar la ecuación, convierte °C a K y asegúrate de que las unidades sean compatibles con el valor de R.</div>
+        </article>
+      </div>
+      <div class="exercise-section" data-law="ideal"></div>
+    </section>
+  </main>
+
+  <footer><strong>GasLab</strong> · Explora, calcula, comprueba y vuelve a intentar.</footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const R = 0.082057;
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+      const fmt = (value, digits = 2) => Number(value).toLocaleString("es-CO", { maximumFractionDigits: digits, minimumFractionDigits: digits });
+
+      function buildParticles(container, count, speed = 1) {
+        if (!container) return;
+        container.innerHTML = "";
+        const fragment = document.createDocumentFragment();
+        for (let i = 0; i < count; i += 1) {
+          const dot = document.createElement("span");
+          dot.className = "particle";
+          dot.style.left = (5 + Math.random() * 88) + "%";
+          dot.style.top = (5 + Math.random() * 84) + "%";
+          dot.style.setProperty("--dx-1", (-14 + Math.random() * 28) + "px");
+          dot.style.setProperty("--dy-1", (-14 + Math.random() * 28) + "px");
+          dot.style.setProperty("--dx-2", (-18 + Math.random() * 36) + "px");
+          dot.style.setProperty("--dy-2", (-18 + Math.random() * 36) + "px");
+          dot.style.setProperty("--dx-3", (-12 + Math.random() * 24) + "px");
+          dot.style.setProperty("--dy-3", (-12 + Math.random() * 24) + "px");
+          dot.style.animationDelay = (-Math.random() * 2.8) + "s";
+          dot.style.animationDuration = Math.max(0.7, 3.2 / speed + Math.random() * 1.1) + "s";
+          fragment.appendChild(dot);
+        }
+        container.appendChild(fragment);
+      }
+
+      function updateIntro() {
+        const t = +$("#intro-t").value;
+        const v = +$("#intro-v").value;
+        const n = +$("#intro-n").value / 10;
+        const p = n * R * t / v;
+        $("#intro-t-out").textContent = t + " K";
+        $("#intro-v-out").textContent = v + " L";
+        $("#intro-n-out").textContent = fmt(n, 1) + " mol";
+        $("#intro-p").textContent = fmt(p) + " atm";
+        $("#intro-collisions").textContent = p < 0.9 ? "Bajos" : p < 2.2 ? "Medios" : "Altos";
+        $("#intro-state").textContent = p > 3.5 ? "Comprimido" : t > 410 ? "Muy activo" : "Estable";
+        $("#intro-box").style.setProperty("--box-width", (38 + v / 30 * 55) + "%");
+        buildParticles($("#intro-particles"), Math.round(n * 13), t / 300);
+      }
+      ["intro-t", "intro-v", "intro-n"].forEach(id => $("#" + id).addEventListener("input", updateIntro));
+
+      function updateBoyle() {
+        const v = +$("#boyle-v").value;
+        const p = 72 / v;
+        const pct = 18 + ((v - 20) / 80) * 67;
+        $("#boyle-v-out").textContent = v + " mL";
+        $("#boyle-vol").textContent = v + " mL";
+        $("#boyle-pres").textContent = fmt(p) + " atm";
+        $("#syringe").style.setProperty("--plunger", pct + "%");
+        $("#syringe").style.setProperty("--gas-width", pct + "%");
+        $("#plunger").setAttribute("aria-valuenow", String(v));
+        buildParticles($("#boyle-particles"), 17, Math.min(2.1, 1.2 / p + p));
+        $("#graph-boyle").value = v;
+        updateGraph("boyle", v);
+      }
+      $("#boyle-v").addEventListener("input", updateBoyle);
+
+      let draggingPlunger = false;
+      const syringe = $("#syringe");
+      const plunger = $("#plunger");
+      function setPlungerFromPointer(clientX) {
+        const rect = syringe.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (clientX - rect.left - rect.width * .18) / (rect.width * .67)));
+        $("#boyle-v").value = Math.round(20 + ratio * 80);
+        updateBoyle();
+      }
+      plunger.addEventListener("pointerdown", event => {
+        draggingPlunger = true;
+        plunger.setPointerCapture(event.pointerId);
+        setPlungerFromPointer(event.clientX);
+      });
+      plunger.addEventListener("pointermove", event => { if (draggingPlunger) setPlungerFromPointer(event.clientX); });
+      plunger.addEventListener("pointerup", () => { draggingPlunger = false; });
+      plunger.addEventListener("keydown", event => {
+        if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+        event.preventDefault();
+        const delta = event.key === "ArrowRight" ? 2 : -2;
+        $("#boyle-v").value = Math.max(20, Math.min(100, +$("#boyle-v").value + delta));
+        updateBoyle();
+      });
+
+      function updateGay() {
+        const t = +$("#gay-t").value;
+        const p = 210 * t / 293;
+        const rotation = -75 + ((t - 250) / 130) * 150;
+        $("#gay-t-out").textContent = t + " K";
+        $("#gay-temp").textContent = t + " K";
+        $("#gay-pres").textContent = fmt(p, 0) + " kPa";
+        $("#tire-needle").style.transform = "rotate(" + rotation + "deg)";
+        $("#tire").style.transform = "scale(" + (0.97 + (p - 179) / 500) + ")";
+        $("#graph-gay").value = t;
+        updateGraph("gay", t);
+      }
+      $("#gay-t").addEventListener("input", updateGay);
+
+      function updateCharles() {
+        const t = +$("#charles-t").value;
+        const v = 2.4 * t / 300;
+        const diameter = 105 + ((t - 220) / 200) * 80;
+        $("#charles-t-out").textContent = t + " K";
+        $("#charles-temp").textContent = t + " K";
+        $("#charles-vol").textContent = fmt(v) + " L";
+        $("#balloon").style.setProperty("--balloon-size", diameter + "px");
+        $("#heat-fill").style.height = ((t - 220) / 200 * 100) + "%";
+        $("#graph-charles").value = t;
+        updateGraph("charles", t);
+      }
+      $("#charles-t").addEventListener("input", updateCharles);
+
+      function updateIdeal() {
+        const n = +$("#ideal-n").value / 10;
+        const t = +$("#ideal-t").value;
+        const v = +$("#ideal-v").value;
+        const p = n * R * t / v;
+        $("#ideal-n-out").textContent = fmt(n, 1) + " mol";
+        $("#ideal-t-out").textContent = t + " K";
+        $("#ideal-v-out").textContent = v + " L";
+        $("#ideal-p").textContent = fmt(p) + " atm";
+        $("#ideal-count").textContent = String(Math.round(n * 10));
+        $("#ideal-box").style.setProperty("--box-width", (36 + v / 30 * 58) + "%");
+        buildParticles($("#ideal-particles"), Math.round(n * 10), t / 300);
+      }
+      ["ideal-n", "ideal-t", "ideal-v"].forEach(id => $("#" + id).addEventListener("input", updateIdeal));
+
+      const chartConfig = {
+        boyle: {
+          xMin: 20, xMax: 100, yMin: .6, yMax: 3.6, xLabel: "Volumen (mL)", yLabel: "Presión (atm)",
+          fn: x => 72 / x, text: (x, y) => "V = " + Math.round(x) + " mL · P = " + fmt(y) + " atm"
+        },
+        gay: {
+          xMin: 250, xMax: 380, yMin: 175, yMax: 275, xLabel: "Temperatura (K)", yLabel: "Presión (kPa)",
+          fn: x => 210 * x / 293, text: (x, y) => "T = " + Math.round(x) + " K · P = " + fmt(y, 0) + " kPa"
+        },
+        charles: {
+          xMin: 220, xMax: 420, yMin: 1.7, yMax: 3.5, xLabel: "Temperatura (K)", yLabel: "Volumen (L)",
+          fn: x => 2.4 * x / 300, text: (x, y) => "T = " + Math.round(x) + " K · V = " + fmt(y) + " L"
+        },
+        ideal: {
+          xMin: 5, xMax: 35, yMin: .65, yMax: 5, xLabel: "Volumen (L)", yLabel: "Presión (atm)",
+          fn: x => R * 300 / x, text: (x, y) => "V = " + fmt(x, 0) + " L · P = " + fmt(y) + " atm"
+        }
+      };
+
+      const chartState = {};
+      function drawChart(name, progress = 1) {
+        const canvas = $("#chart-" + name);
+        if (!canvas) return;
+        const cfg = chartConfig[name];
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const width = Math.max(300, rect.width);
+        const height = 290;
+        if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
+          canvas.width = Math.round(width * dpr);
+          canvas.height = Math.round(height * dpr);
+        }
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        const pad = { left: 63, right: 20, top: 20, bottom: 50 };
+        const pw = width - pad.left - pad.right;
+        const ph = height - pad.top - pad.bottom;
+        const xPx = x => pad.left + (x - cfg.xMin) / (cfg.xMax - cfg.xMin) * pw;
+        const yPx = y => pad.top + ph - (y - cfg.yMin) / (cfg.yMax - cfg.yMin) * ph;
+
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#263653";
+        ctx.fillStyle = "#93a6c7";
+        ctx.font = "12px system-ui";
+        for (let i = 0; i <= 4; i += 1) {
+          const x = pad.left + pw * i / 4;
+          const y = pad.top + ph * i / 4;
+          ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + ph); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + pw, y); ctx.stroke();
+          const xv = cfg.xMin + (cfg.xMax - cfg.xMin) * i / 4;
+          const yv = cfg.yMax - (cfg.yMax - cfg.yMin) * i / 4;
+          ctx.fillText(Number.isInteger(xv) ? xv : xv.toFixed(1), x - 9, pad.top + ph + 19);
+          ctx.fillText(Number.isInteger(yv) ? yv : yv.toFixed(1), 8, y + 4);
+        }
+        ctx.strokeStyle = "#7891b7";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(pad.left, pad.top); ctx.lineTo(pad.left, pad.top + ph); ctx.lineTo(pad.left + pw, pad.top + ph); ctx.stroke();
+        ctx.fillStyle = "#d5e1f4";
+        ctx.font = "700 13px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(cfg.xLabel, pad.left + pw / 2, height - 7);
+        ctx.save();
+        ctx.translate(15, pad.top + ph / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText(cfg.yLabel, 0, 0);
+        ctx.restore();
+        ctx.textAlign = "start";
+
+        const total = 80;
+        const count = Math.max(2, Math.round(total * progress));
+        ctx.strokeStyle = "#4ee6d8";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+        for (let i = 0; i < count; i += 1) {
+          const xVal = cfg.xMin + (cfg.xMax - cfg.xMin) * i / (total - 1);
+          const yVal = cfg.fn(xVal);
+          if (i === 0) ctx.moveTo(xPx(xVal), yPx(yVal)); else ctx.lineTo(xPx(xVal), yPx(yVal));
+        }
+        ctx.stroke();
+
+        const selected = chartState[name] ?? +(document.querySelector("#graph-" + name)?.value || cfg.xMin);
+        const sy = cfg.fn(selected);
+        ctx.beginPath();
+        ctx.arc(xPx(selected), yPx(sy), 7, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffd166";
+        ctx.fill();
+        ctx.strokeStyle = "#08101f";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      }
+
+      function animateChart(name) {
+        const start = performance.now();
+        const duration = 750;
+        function frame(now) {
+          const progress = Math.min(1, (now - start) / duration);
+          drawChart(name, 1 - Math.pow(1 - progress, 3));
+          if (progress < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }
+
+      function updateGraph(name, value) {
+        const cfg = chartConfig[name];
+        const x = +value;
+        chartState[name] = x;
+        const y = cfg.fn(x);
+        const unitLabel = name === "boyle" || name === "ideal" ? "V = " + Math.round(x) + (name === "boyle" ? " mL" : " L") : "T = " + Math.round(x) + " K";
+        $("#graph-" + name + "-out").textContent = unitLabel;
+        $("#readout-" + name).textContent = cfg.text(x, y);
+        drawChart(name);
+      }
+      $$(".graph-control").forEach(input => input.addEventListener("input", () => {
+        updateGraph(input.dataset.chart, input.value);
+        if (input.dataset.chart === "boyle") { $("#boyle-v").value = input.value; updateBoyle(); }
+        if (input.dataset.chart === "gay") { $("#gay-t").value = input.value; updateGay(); }
+        if (input.dataset.chart === "charles") { $("#charles-t").value = input.value; updateCharles(); }
+      }));
+
+      const exerciseData = {
+        boyle: {
+          title: "Ley de Boyle",
+          solved: [
+            { icon: "💉", target: "P₂", problem: "Una jeringa contiene 60 mL de gas a 1,20 atm. Se comprime hasta 30 mL. ¿Cuál es la presión final?", steps: ["Datos: P₁ = 1,20 atm; V₁ = 60 mL; V₂ = 30 mL.", "Fórmula: P₁V₁ = P₂V₂.", "Despeje: P₂ = (P₁ × V₁) / V₂.", "P₂ = (1,20 × 60) / 30 = 2,40 atm."], result: "2,40 atm" },
+            { icon: "🤿", target: "V₁", problem: "Al ascender, una burbuja llega a ocupar 8,0 L cuando la presión es 1,0 atm. Si inicialmente estaba a 2,5 atm, ¿cuál era su volumen inicial?", steps: ["Datos: P₁ = 2,5 atm; P₂ = 1,0 atm; V₂ = 8,0 L.", "Fórmula: P₁V₁ = P₂V₂.", "Despeje: V₁ = (P₂ × V₂) / P₁.", "V₁ = (1,0 × 8,0) / 2,5 = 3,20 L."], result: "3,20 L" }
+          ],
+          class: [
+            { icon: "🧴", target: "P₁", problem: "Un gas ocupaba 500 mL. Después se comprime a 300 mL y alcanza 1,50 atm. Calcula la presión inicial P₁.", answer: 0.9, unit: "atm", hint: ["P₁V₁ = P₂V₂", "P₁ = (P₂ × V₂) / V₁", "P₁ = (1,50 × 300) / 500 = 0,90 atm"] },
+            { icon: "🚲", target: "V₂", problem: "Una bomba de bicicleta contiene 1,5 L de aire a 1,0 atm. Al comprimirlo alcanza 3,0 atm. Calcula V₂.", answer: 0.5, unit: "L", hint: ["V₂ = (P₁ × V₁) / P₂", "V₂ = (1,0 × 1,5) / 3,0", "V₂ = 0,50 L"] },
+            { icon: "🧯", target: "P₂", problem: "Un cilindro contiene 250 cm³ a 760 mmHg. Si el volumen baja a 100 cm³, calcula P₂.", answer: 1900, unit: "mmHg", hint: ["P₂ = (P₁ × V₁) / V₂", "P₂ = (760 × 250) / 100", "P₂ = 1900 mmHg"] }
+          ],
+          practice: [
+            { icon: "💉", target: "V₁", problem: "Una muestra estaba a 1,5 atm. Después queda en 25 mL y 2,4 atm. Halla el volumen inicial V₁.", answer: 40, unit: "mL", hint: ["Usa P₁V₁ = P₂V₂.", "Despeja V₁ = (P₂V₂) / P₁.", "Sustituye: (2,4 × 25) / 1,5 = 40 mL."] },
+            { icon: "🫧", target: "P₁", problem: "Un gas ocupaba 2,4 L. Luego queda en 1,2 L a 2,2 atm. Halla la presión inicial P₁.", answer: 1.1, unit: "atm", hint: ["Usa P₁V₁ = P₂V₂.", "Despeja P₁ = (P₂V₂) / V₁.", "(2,2 × 1,2) / 2,4 = 1,10 atm."] },
+            { icon: "🔬", target: "V₂", problem: "Un gas ocupa 600 mL a 95 kPa. Se somete a 150 kPa. ¿Cuál es V₂?", answer: 380, unit: "mL", hint: ["Despeja V₂ = (P₁V₁) / P₂.", "(95 × 600) / 150 = 380 mL."] },
+            { icon: "🧪", target: "P₂", problem: "Una muestra de 3,5 L está a 0,80 atm y se comprime a 2,0 L. Calcula P₂.", answer: 1.4, unit: "atm", hint: ["Despeja P₂ = (P₁V₁) / V₂.", "(0,80 × 3,5) / 2,0 = 1,40 atm."] },
+            { icon: "⚙️", target: "V₁", problem: "Un pistón estaba a 120 kPa. Después queda en 100 mL a 90 kPa. ¿Cuál era su volumen inicial V₁?", answer: 75, unit: "mL", hint: ["Despeja V₁ = (P₂V₂) / P₁.", "(90 × 100) / 120 = 75 mL."] }
+          ]
+        },
+        gay: {
+          title: "Ley de Gay-Lussac",
+          solved: [
+            { icon: "🚗", target: "P₂", problem: "Una llanta está a 210 kPa y 293 K. Después de rodar alcanza 323 K. ¿Cuál es la nueva presión?", steps: ["Datos: P₁ = 210 kPa; T₁ = 293 K; T₂ = 323 K.", "Fórmula: P₁/T₁ = P₂/T₂.", "Despeje: P₂ = (P₁ × T₂) / T₁.", "P₂ = (210 × 323) / 293 = 231,50 kPa."], result: "231,50 kPa" },
+            { icon: "🧴", target: "T₁", problem: "Un aerosol rígido estaba a 1,80 atm. Al llegar a 348 K alcanza 2,088 atm. ¿Cuál era su temperatura inicial?", steps: ["El volumen no cambia.", "Fórmula: P₁/T₁ = P₂/T₂.", "Despeje: T₁ = (P₁ × T₂) / P₂.", "T₁ = (1,80 × 348) / 2,088 = 300 K."], result: "300 K" }
+          ],
+          class: [
+            { icon: "🥫", target: "P₁", problem: "A 373 K un recipiente rígido alcanza 136,63 kPa. Si inicialmente estaba a 273 K, calcula P₁.", answer: 100, unit: "kPa", hint: ["P₁/T₁ = P₂/T₂", "P₁ = (P₂ × T₁) / T₂", "P₁ = (136,63 × 273) / 373 ≈ 100 kPa"] },
+            { icon: "🚙", target: "T₂", problem: "Una llanta marca 220 kPa a 288 K. ¿Qué temperatura T₂ alcanza cuando la presión llega a 235,28 kPa?", answer: 308, unit: "K", hint: ["T₂ = (P₂ × T₁) / P₁", "T₂ = (235,28 × 288) / 220", "T₂ ≈ 308 K"] },
+            { icon: "🧯", target: "P₂", problem: "Un tanque está a 760 mmHg y 300 K. Se enfría a 250 K. Calcula P₂.", answer: 633.33, unit: "mmHg", hint: ["P₂ = (P₁ × T₂) / T₁", "P₂ = (760 × 250) / 300", "P₂ = 633,33 mmHg"] }
+          ],
+          practice: [
+            { icon: "⚗️", target: "T₁", problem: "Un matraz estaba a 150 kPa. Al calentarlo a 360 K alcanza 174,19 kPa. Halla T₁.", answer: 310, unit: "K", hint: ["Usa P₁/T₁ = P₂/T₂.", "Despeja T₁ = (P₁T₂) / P₂.", "(150 × 360) / 174,19 ≈ 310 K."] },
+            { icon: "🛞", target: "P₁", problem: "Una llanta estaba a 290 K. Luego alcanza 3,0 atm a 362,5 K. ¿Cuál era P₁?", answer: 2.4, unit: "atm", hint: ["Despeja P₁ = (P₂T₁) / T₂.", "(3,0 × 290) / 362,5 = 2,40 atm."] },
+            { icon: "🛰️", target: "T₂", problem: "Un tanque está a 95 kPa y 280 K. ¿Qué temperatura T₂ producirá una presión de 120 kPa?", answer: 353.68, unit: "K", hint: ["Despeja T₂ = (P₂T₁) / P₁.", "(120 × 280) / 95 = 353,68 K."] },
+            { icon: "❄️", target: "P₂", problem: "Un recipiente está a 180 kPa y 300 K. Se enfría a 270 K. Calcula P₂.", answer: 162, unit: "kPa", hint: ["Despeja P₂ = (P₁T₂) / T₁.", "(180 × 270) / 300 = 162 kPa."] },
+            { icon: "☀️", target: "T₁", problem: "Un contenedor estaba a 101,3 kPa. Al llegar a 333 K alcanza 113,20 kPa. Halla T₁.", answer: 298, unit: "K", hint: ["Despeja T₁ = (P₁T₂) / P₂.", "(101,3 × 333) / 113,20 ≈ 298 K."] }
+          ]
+        },
+        charles: {
+          title: "Ley de Charles",
+          solved: [
+            { icon: "🎈", target: "V₂", problem: "Un globo ocupa 2,0 L a 300 K. Se calienta a 450 K a presión constante. ¿Cuál es V₂?", steps: ["Datos: V₁ = 2,0 L; T₁ = 300 K; T₂ = 450 K.", "Fórmula: V₁/T₁ = V₂/T₂.", "Despeje: V₂ = (V₁ × T₂) / T₁.", "V₂ = (2,0 × 450) / 300 = 3,00 L."], result: "3,00 L" },
+            { icon: "🧊", target: "T₁", problem: "Una bolsa flexible ocupaba 500 mL. Al enfriarse hasta 232 K queda en 400 mL. ¿Cuál era su temperatura inicial?", steps: ["La presión permanece constante.", "Fórmula: V₁/T₁ = V₂/T₂.", "Despeje: T₁ = (V₁ × T₂) / V₂.", "T₁ = (500 × 232) / 400 = 290 K."], result: "290 K" }
+          ],
+          class: [
+            { icon: "🎈", target: "V₁", problem: "A 373 K un globo ocupa 2,05 L. Si inicialmente estaba a 273 K, calcula V₁.", answer: 1.5, unit: "L", hint: ["V₁/T₁ = V₂/T₂", "V₁ = (V₂ × T₁) / T₂", "V₁ = (2,05 × 273) / 373 ≈ 1,50 L"] },
+            { icon: "🧪", target: "T₂", problem: "Un gas ocupa 800 mL a 320 K. ¿A qué temperatura T₂ ocupará 700 mL?", answer: 280, unit: "K", hint: ["T₂ = (V₂ × T₁) / V₁", "T₂ = (700 × 320) / 800", "T₂ = 280 K"] },
+            { icon: "🏮", target: "V₂", problem: "Una bolsa de aire ocupa 2,4 L a 300 K y se calienta a 375 K. Calcula V₂.", answer: 3, unit: "L", hint: ["V₂ = (V₁ × T₂) / T₁", "V₂ = (2,4 × 375) / 300", "V₂ = 3,00 L"] }
+          ],
+          practice: [
+            { icon: "🎈", target: "T₁", problem: "Un globo ocupaba 1,2 L. Al llegar a 350 K alcanza 1,68 L. Halla T₁.", answer: 250, unit: "K", hint: ["Usa V₁/T₁ = V₂/T₂.", "Despeja T₁ = (V₁T₂) / V₂.", "(1,2 × 350) / 1,68 = 250 K."] },
+            { icon: "❄️", target: "V₁", problem: "Un gas estaba a 300 K. Al enfriarse a 250 K ocupa 750 mL. ¿Cuál era V₁?", answer: 900, unit: "mL", hint: ["Despeja V₁ = (V₂T₁) / T₂.", "(750 × 300) / 250 = 900 mL."] },
+            { icon: "☀️", target: "T₂", problem: "Una bolsa ocupa 3,5 L a 280 K. ¿A qué temperatura T₂ alcanzará 4,2 L?", answer: 336, unit: "K", hint: ["Despeja T₂ = (V₂T₁) / V₁.", "(4,2 × 280) / 3,5 = 336 K."] },
+            { icon: "🫙", target: "V₂", problem: "Un recipiente flexible ocupa 650 mL a 310 K. Se calienta a 400 K. Halla V₂.", answer: 838.71, unit: "mL", hint: ["V₂ = (V₁T₂) / T₁.", "(650 × 400) / 310 = 838,71 mL."] },
+            { icon: "🏔️", target: "T₁", problem: "Una bolsa ocupaba 2,8 L. Después queda en 2,4 L a 300 K. ¿Cuál era T₁?", answer: 350, unit: "K", hint: ["Despeja T₁ = (V₁T₂) / V₂.", "(2,8 × 300) / 2,4 = 350 K."] }
+          ]
+        },
+        ideal: {
+          title: "Gases ideales",
+          solved: [
+            { icon: "🧪", target: "P", problem: "Un recipiente contiene 0,50 mol de gas a 300 K en 12 L. ¿Cuál es su presión?", steps: ["Datos: n = 0,50 mol; T = 300 K; V = 12 L.", "Usa R = 0,082057 L·atm·mol⁻¹·K⁻¹.", "Despeje: P = nRT / V.", "P = (0,50 × 0,082057 × 300) / 12 = 1,03 atm."], result: "1,03 atm" },
+            { icon: "🚀", target: "V", problem: "Un tanque contiene 2,0 mol a 350 K y 4,0 atm. ¿Qué volumen ocupa?", steps: ["Datos: n = 2,0 mol; T = 350 K; P = 4,0 atm.", "Fórmula: PV = nRT.", "Despeje: V = nRT / P.", "V = (2,0 × 0,082057 × 350) / 4,0 = 14,36 L."], result: "14,36 L" }
+          ],
+          class: [
+            { icon: "⚗️", target: "P", problem: "Calcula P para 1,2 mol de gas a 298 K en un recipiente de 24 L.", answer: 1.22, unit: "atm", hint: ["P = nRT / V", "P = (1,2 × 0,082057 × 298) / 24", "P = 1,22 atm"] },
+            { icon: "🔬", target: "n", problem: "Un gas ocupa 10 L a 2,0 atm y 310 K. ¿Cuántos moles contiene?", answer: 0.79, unit: "mol", hint: ["n = PV / RT", "n = (2,0 × 10) / (0,082057 × 310)", "n = 0,79 mol"] },
+            { icon: "🧯", target: "T", problem: "Un tanque de 15 L contiene 0,75 mol a 1,5 atm. Calcula la temperatura.", answer: 365.6, unit: "K", hint: ["T = PV / nR", "T = (1,5 × 15) / (0,75 × 0,082057)", "T = 365,60 K"] }
+          ],
+          practice: [
+            { icon: "🧫", target: "V", problem: "¿Qué volumen ocupan 0,25 mol a 273 K y 1,0 atm?", answer: 5.6, unit: "L", hint: ["Usa PV = nRT.", "Despeja V = nRT / P.", "(0,25 × 0,082057 × 273) / 1,0 = 5,60 L."] },
+            { icon: "🚗", target: "P", problem: "Un depósito de 25 L contiene 3,0 mol a 400 K. Calcula la presión.", answer: 3.94, unit: "atm", hint: ["Despeja P = nRT / V.", "(3,0 × 0,082057 × 400) / 25 = 3,94 atm."] },
+            { icon: "🫙", target: "n", problem: "Un recipiente de 20 L está a 0,95 atm y 290 K. ¿Cuántos moles contiene?", answer: 0.8, unit: "mol", hint: ["Despeja n = PV / RT.", "(0,95 × 20) / (0,082057 × 290) = 0,80 mol."] },
+            { icon: "🛰️", target: "T", problem: "Un tanque de 18 L contiene 1,5 mol a 2,5 atm. Calcula T.", answer: 365.6, unit: "K", hint: ["Despeja T = PV / nR.", "(2,5 × 18) / (1,5 × 0,082057) = 365,60 K."] },
+            { icon: "🥤", target: "V", problem: "Un mol de gas está a 298 K y 0,85 atm. ¿Qué volumen ocupa?", answer: 28.77, unit: "L", hint: ["Despeja V = nRT / P.", "(1,0 × 0,082057 × 298) / 0,85 = 28,77 L."] }
+          ]
+        }
+      };
+
+      function renderExercises(law, container) {
+        const data = exerciseData[law];
+        const groups = [
+          { key: "solved", label: "1 · Explicación paso a paso", description: "2 ejercicios resueltos" },
+          { key: "class", label: "2 · Trabajo en clase", description: "3 ejercicios para comprobar" },
+          { key: "practice", label: "3 · Práctica individual", description: "5 ejercicios con pistas automáticas" }
+        ];
+        container.innerHTML = '<div class="exercise-heading"><div><span class="session-tag">Zona de práctica</span><h3>10 ejercicios · ' + data.title + '</h3><p>Acepta punto o coma decimal. Redondea a dos cifras cuando sea necesario.</p></div><div class="progress-box"><span class="progress-label">0 de 8 comprobados</span><div class="progress-track"><div class="progress-fill"></div></div></div></div>' +
+          groups.map(group => {
+            const cards = data[group.key].map((item, localIndex) => {
+              const index = group.key === "solved" ? localIndex + 1 : group.key === "class" ? localIndex + 3 : localIndex + 6;
+              if (group.key === "solved") {
+                return '<article class="exercise-card solved"><div class="exercise-top"><span class="exercise-number">' + index + '</span><h4>Ejercicio explicado</h4><span class="target-chip">Hallar ' + item.target + '</span><span class="exercise-icon" aria-hidden="true">' + item.icon + '</span></div><p class="problem">' + item.problem + '</p><div class="steps"><strong>Solución</strong><ol>' + item.steps.map(step => '<li>' + step + '</li>').join("") + '</ol><p><strong>Resultado: ' + item.result + '</strong></p></div></article>';
+              }
+              const detailed = group.key === "practice";
+              return '<article class="exercise-card" data-answer="' + item.answer + '" data-detailed="' + detailed + '"><div class="exercise-top"><span class="exercise-number">' + index + '</span><h4>' + (detailed ? "Práctica individual" : "En clase") + '</h4><span class="target-chip">Hallar ' + item.target + '</span><span class="exercise-icon" aria-hidden="true">' + item.icon + '</span></div><p class="problem">' + item.problem + '</p><div class="answer-row"><label class="answer-wrap"><span class="sr-only"></span><input inputmode="decimal" autocomplete="off" aria-label="Respuesta del ejercicio ' + index + '" placeholder="Tu respuesta"><span class="unit">' + item.unit + '</span></label><button class="check-btn" type="button">Comprobar</button></div><p class="feedback" aria-live="polite"></p><div class="hint"><strong>' + (detailed ? "Pista paso a paso" : "Revisa tu cálculo") + '</strong><ol>' + item.hint.map(step => '<li>' + step + '</li>').join("") + '</ol></div></article>';
+            }).join("");
+            return '<div class="exercise-group"><h4 class="exercise-group-title">' + group.label + ' <span>· ' + group.description + '</span></h4><div class="exercise-grid">' + cards + '</div></div>';
+          }).join("");
+      }
+
+      $$(".exercise-section").forEach(container => renderExercises(container.dataset.law, container));
+
+      function updateProgress(section) {
+        const interactive = $$("[data-answer]", section);
+        const completed = interactive.filter(card => card.classList.contains("correct")).length;
+        $(".progress-label", section).textContent = completed + " de " + interactive.length + " comprobados";
+        $(".progress-fill", section).style.width = (completed / interactive.length * 100) + "%";
+      }
+
+      document.addEventListener("click", event => {
+        const button = event.target.closest(".check-btn");
+        if (!button) return;
+        const card = button.closest("[data-answer]");
+        const input = $("input", card);
+        const feedback = $(".feedback", card);
+        const hint = $(".hint", card);
+        const value = Number.parseFloat(input.value.trim().replace(",", "."));
+        const answer = +card.dataset.answer;
+        if (!Number.isFinite(value)) {
+          feedback.textContent = "Escribe un valor numérico antes de comprobar.";
+          feedback.className = "feedback bad";
+          input.focus();
+          return;
+        }
+        const tolerance = Math.max(0.02, Math.abs(answer) * 0.008);
+        const correct = Math.abs(value - answer) <= tolerance;
+        card.classList.toggle("correct", correct);
+        card.classList.toggle("incorrect", !correct);
+        feedback.className = "feedback " + (correct ? "good" : "bad");
+        if (correct) {
+          feedback.textContent = "¡Correcto! Tu resultado coincide.";
+          hint.classList.remove("open");
+        } else {
+          feedback.textContent = card.dataset.detailed === "true" ? "Aún no. Revisa la pista que apareció debajo." : "No coincide. Verifica fórmula, despeje y unidades.";
+          hint.classList.toggle("open", card.dataset.detailed === "true");
+        }
+        updateProgress(button.closest(".exercise-section"));
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Enter" && event.target.matches(".answer-wrap input")) {
+          event.preventDefault();
+          event.target.closest(".answer-row").querySelector(".check-btn").click();
+        }
+      });
+
+      const sectionObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          $$(".session-nav a").forEach(link => link.classList.toggle("active", link.getAttribute("href") === "#" + entry.target.id));
+        });
+      }, { rootMargin: "-30% 0px -60% 0px" });
+      $$("[data-section]").forEach(section => sectionObserver.observe(section));
+
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => Object.keys(chartConfig).forEach(name => drawChart(name)), 120);
+      });
+
+      updateIntro();
+      updateBoyle();
+      updateGay();
+      updateCharles();
+      updateIdeal();
+      Object.keys(chartConfig).forEach(name => {
+        updateGraph(name, $("#graph-" + name).value);
+        animateChart(name);
+      });
+    })();
+  </script>
+</body>
+</html>
