@@ -1,0 +1,1860 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f6b78">
+<title>Laboratorio de gases ideales · Química 10°</title>
+<style>
+:root {
+  --primary:#0f6b78;
+  --primary-dark:#094754;
+  --accent:#f2b84b;
+  --ink:#183743;
+  --muted:#4a626a;
+  --line:#cbdfe2;
+  --surface:#f1f8f9;
+  --white:#fff;
+  --ok:#146348;
+  --err:#9b2d36;
+  --shadow:0 12px 32px #153e4c0b;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:var(--surface);
+  font-size:16px;
+}
+*,*::before,*::after {
+  box-sizing:border-box;
+}
+html {
+  scroll-behavior:smooth;
+}
+body {
+  margin:0;
+  line-height:1.55;
+}
+a {
+  color:var(--primary-dark);
+}
+[hidden] {
+  display:none!important;
+}
+button,input,select {
+  font:inherit;
+}
+button {
+  cursor:pointer;
+}
+button:disabled {
+  cursor:default;
+}
+button,input,select,a {
+  touch-action:manipulation;
+}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible {
+  outline:3px solid #b77600;
+  outline-offset:3px;
+}
+h1,h2,h3,p {
+  margin:0;
+}
+h1,h2,h3 {
+  line-height:1.16;
+}
+h2 {
+  font-size:clamp(1.4rem,3vw,1.85rem);
+}
+h3 {
+  font-size:1.12rem;
+}
+p+ p {
+  margin-top:.6rem;
+}
+li+li {
+  margin-top:.42rem;
+}
+fieldset {
+  min-width:0;
+  border:0;
+  padding:0;
+  margin:0;
+}
+legend {
+  padding:0;
+  font-weight:750;
+}
+section[id] {
+  scroll-margin-top:5rem;
+}
+.wrap {
+  width:min(1100px,calc(100% - 2.5rem));
+  margin-inline:auto;
+}
+.skip {
+  position:absolute;
+  left:.8rem;
+  top:.5rem;
+  transform:translateY(-160%);
+  z-index:5;
+  background:var(--white);
+  padding:.55rem;
+  border-radius:.5rem;
+}
+.skip:focus {
+  transform:translateY(0);
+}
+.nav {
+  position:sticky;
+  top:0;
+  z-index:4;
+  background:var(--primary-dark);
+  color:white;
+  box-shadow:0 4px 16px #07354124;
+}
+.nav-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  min-height:3.55rem;
+}
+.nav a {
+  color:white;
+  text-decoration:none;
+}
+.brand {
+  font-weight:800;
+  font-size:.82rem;
+  letter-spacing:.045em;
+  line-height:1.2;
+}
+.brand span {
+  color:#ffe09a;
+}
+.nav-links {
+  display:flex;
+  gap:.35rem;
+  align-items:center;
+}
+.nav-links a {
+  display:inline-flex;
+  align-items:center;
+  padding:.55rem .65rem;
+  min-height:44px;
+  font-size:.86rem;
+  font-weight:650;
+  white-space:nowrap;
+  border-radius:.5rem;
+}
+.nav-links a:hover {
+  background:#ffffff22;
+}
+.nav-links a:last-child {
+  border:1px solid #ffffff55;
+}
+.hero {
+  background:linear-gradient(115deg,#0a4c5c 5%,#0f6b78 63%,#197b82 100%);
+  color:white;
+  padding:clamp(2rem,6vw,4rem) 0 2rem;
+}
+.hero-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(180px,300px);
+  align-items:center;
+  gap:2rem;
+}
+.kicker {
+  font-size:.8rem;
+  letter-spacing:.095em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:#ffe4a4;
+}
+.hero h1 {
+  font-size:clamp(2rem,6vw,3.65rem);
+  max-width:14ch;
+  margin:.45rem 0 .75rem;
+  letter-spacing:-.035em;
+}
+.hero p:last-child {
+  max-width:53ch;
+  color:#e6f6f7;
+}
+.hero-art {
+  width:100%;
+  max-height:230px;
+}
+.meta {
+  display:flex;
+  flex-wrap:wrap;
+  gap:.55rem;
+  margin-top:1.25rem;
+}
+.meta span {
+  font-size:.86rem;
+  font-weight:650;
+  background:#ffffff18;
+  border:1px solid #ffffff4b;
+  padding:.32rem .65rem;
+  border-radius:999px;
+}
+main.wrap {
+  padding:1.25rem 0 3.2rem;
+  display:grid;
+  gap:1rem;
+}
+.card {
+  background:var(--white);
+  border:1px solid #dbeaec;
+  border-radius:1.1rem;
+  padding:clamp(1rem,3vw,1.65rem);
+  box-shadow:var(--shadow);
+  min-width:0;
+}
+.card-head {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:.8rem;
+  flex-wrap:wrap;
+  margin-bottom:.85rem;
+}
+.section-num {
+  font-size:.75rem;
+  color:var(--primary);
+  text-transform:uppercase;
+  letter-spacing:.085em;
+  font-weight:850;
+  margin-bottom:.23rem;
+}
+.tag {
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  background:#edf2f4;
+  color:#4c626a;
+  font-size:.81rem;
+  font-weight:750;
+  padding:.27rem .7rem;
+  white-space:nowrap;
+}
+.tag.active {
+  background:#fff1d1;
+  color:#62430b;
+}
+.tag.saved {
+  background:#e4f3eb;
+  color:var(--ok);
+}
+.intro-note {
+  color:var(--muted);
+  font-size:.94rem;
+}
+.note {
+  border-left:4px solid var(--accent);
+  background:#fff8e9;
+  border-radius:0 .65rem .65rem 0;
+  padding:.65rem .8rem;
+  margin-top:.85rem;
+}
+.note.ok {
+  background:#eaf6ee;
+  border-color:#27835d;
+}
+.note.error {
+  background:#fff1f1;
+  border-color:var(--err);
+}
+.hint {
+  font-size:.9rem;
+  color:var(--muted);
+  margin:.62rem 0 0;
+}
+.stage-link {
+  font-weight:750;
+}
+.fine {
+  font-size:.86rem;
+  color:var(--muted);
+}
+.progress-line {
+  display:flex;
+  justify-content:space-between;
+  gap:.65rem;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.progress-line strong {
+  color:var(--primary-dark);
+}
+progress {
+  display:block;
+  width:100%;
+  height:.55rem;
+  margin:.55rem 0 .6rem;
+  appearance:none;
+  border:0;
+  border-radius:999px;
+  background:#dcebed;
+  color:var(--primary);
+}
+progress::-webkit-progress-bar {
+  background:#dcebed;
+  border-radius:999px;
+}
+progress::-webkit-progress-value {
+  background:var(--primary);
+  border-radius:999px;
+}
+progress::-moz-progress-bar {
+  background:var(--primary);
+  border-radius:999px;
+}
+.form-grid,.materials,.adjustments,.option-grid,.intro-grid {
+  display:grid;
+  gap:.8rem;
+}
+.form-grid,.materials,.adjustments,.intro-grid {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.span {
+  grid-column:1/-1;
+}
+.field {
+  display:block;
+  min-width:0;
+  font-weight:700;
+}
+.field small {
+  font-weight:400;
+}
+.field input,.field select {
+  display:block;
+  width:100%;
+  min-height:45px;
+  margin-top:.25rem;
+  border:1px solid #a9c3c8;
+  border-radius:.58rem;
+  padding:.55rem .68rem;
+  color:var(--ink);
+  background:white;
+}
+.field input:disabled,.field select:disabled {
+  background:#f0f5f5;
+  color:var(--ink);
+  opacity:1;
+  -webkit-text-fill-color:var(--ink);
+}
+input::placeholder {
+  color:#60757b;
+}
+.actions {
+  display:flex;
+  gap:.65rem;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top:1rem;
+}
+.btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  max-width:100%;
+  border:1px solid var(--primary);
+  border-radius:.65rem;
+  background:var(--primary);
+  color:white;
+  font-weight:750;
+  padding:.55rem 1rem;
+  text-decoration:none;
+  text-align:center;
+}
+.btn:not(:disabled):hover {
+  background:var(--primary-dark);
+  color:white;
+}
+.btn.alt {
+  background:white;
+  color:var(--primary-dark);
+}
+.btn:disabled {
+  background:#e4ecee;
+  border-color:#d7e4e6;
+  color:#4d656d;
+}
+.saved-text {
+  font-size:.88rem;
+  color:var(--ok);
+  font-weight:700;
+}
+.form-error {
+  margin-top:.65rem;
+  color:var(--err);
+  font-weight:650;
+}
+.intro-grid>div {
+  padding:.85rem;
+  border-radius:.75rem;
+  background:#f4fafb;
+  border:1px solid #dceced;
+}
+.intro-grid p {
+  margin-top:.35rem;
+}
+.materials {
+  list-style:none;
+  padding:0;
+  margin:.65rem 0 0;
+}
+.materials li {
+  margin:0;
+  padding:.52rem .6rem .52rem 1.5rem;
+  border-bottom:1px solid #e1ecee;
+  position:relative;
+}
+.materials li::before {
+  content:"";
+  position:absolute;
+  width:.46rem;
+  height:.46rem;
+  top:1.07rem;
+  left:.53rem;
+  border-radius:50%;
+  background:var(--primary);
+}
+.method {
+  list-style:none;
+  margin:.75rem 0 0;
+  padding:0;
+  counter-reset:method;
+}
+.method li {
+  counter-increment:method;
+  padding:.5rem 0 .5rem 2.65rem;
+  position:relative;
+}
+.method li::before {
+  content:counter(method);
+  position:absolute;
+  left:0;
+  top:.5rem;
+  width:1.9rem;
+  height:1.9rem;
+  display:grid;
+  place-items:center;
+  border-radius:.54rem;
+  background:#def0f1;
+  color:var(--primary-dark);
+  font-weight:850;
+}
+.method strong {
+  display:block;
+  margin-bottom:.1rem;
+}
+.measure-figure {
+  display:flex;
+  gap:1rem;
+  align-items:center;
+  padding:.55rem .85rem;
+  margin:.4rem 0;
+  border-radius:.72rem;
+  background:#f1f8f9;
+}
+.measure-figure svg {
+  width:86px;
+  height:88px;
+  flex:none;
+}
+.measure-figure figcaption {
+  font-size:.9rem;
+  color:var(--muted);
+}
+.option-grid {
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  margin-top:.8rem;
+}
+.choices {
+  border:1px solid #d7e8ea;
+  border-radius:.75rem;
+  padding:.65rem .72rem;
+}
+.choices legend {
+  color:var(--primary-dark);
+  padding:0 .3rem;
+}
+.choice {
+  display:flex;
+  align-items:flex-start;
+  gap:.55rem;
+  min-height:44px;
+  padding:.5rem .6rem;
+  border:1px solid #dce8ea;
+  border-radius:.55rem;
+  background:#f8fbfb;
+  cursor:pointer;
+  line-height:1.37;
+}
+.choice + .choice {
+  margin-top:.35rem;
+}
+.choice:has(input:checked) {
+  border-color:var(--primary);
+  background:#e9f6f6;
+}
+.choice:has(input:disabled) {
+  cursor:default;
+}
+.choice input {
+  flex:none;
+  width:1.07rem;
+  height:1.07rem;
+  margin:.14rem 0 0;
+  accent-color:var(--primary);
+}
+.feedback {
+  margin-top:.43rem;
+  font-size:.87rem;
+  font-weight:700;
+}
+.feedback.good {
+  color:var(--ok);
+}
+.feedback.bad {
+  color:var(--err);
+}
+.data-table,.review-table {
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  margin:.65rem 0 0;
+}
+.data-table caption,.review-table caption {
+  text-align:left;
+  font-weight:750;
+  color:var(--primary-dark);
+  padding:0 0 .25rem;
+}
+.data-table th,.data-table td,.review-table th,.review-table td {
+  border:1px solid #d8e8eb;
+  padding:.54rem .65rem;
+  text-align:left;
+  vertical-align:middle;
+  overflow-wrap:anywhere;
+}
+.data-table thead th,.review-table thead th {
+  background:#e1f0f1;
+  color:var(--primary-dark);
+}
+.data-table tbody tr:nth-child(even),.review-table tbody tr:nth-child(even) {
+  background:#f5fafa;
+}
+.data-table thead th:first-child {
+  width:34%;
+}
+.data-table .field input,.data-table .field select {
+  margin:0;
+}
+.data-table .unit-field {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:.3rem;
+  align-items:center;
+}
+.data-table .unit-field small {
+  color:var(--muted);
+}
+.data-table .circ {
+  margin-top:.4rem;
+}
+.table-foot {
+  font-size:.9rem;
+  margin-top:.5rem;
+  color:var(--muted);
+}
+figure {
+  margin:0;
+}
+.chart {
+  margin:.85rem 0;
+  padding:1rem;
+  border:1px solid #dcebec;
+  border-radius:.8rem;
+  background:#f7fbfb;
+}
+.chart-title {
+  font-size:.9rem;
+  font-weight:800;
+  margin-bottom:.55rem;
+}
+.plot-body {
+  display:grid;
+  grid-template-columns:2.35rem minmax(0,1fr);
+  grid-template-rows:clamp(175px,30vw,258px) auto;
+  gap:.35rem .5rem;
+}
+.axis,.plot {
+  position:relative;
+}
+.axis-tick,.grid-line {
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:var(--position);
+}
+.axis-tick {
+  text-align:right;
+  transform:translateY(50%);
+  font-size:.79rem;
+  color:var(--muted);
+}
+.grid-line {
+  border-top:1px solid #d2e1e4;
+  pointer-events:none;
+}
+.plot {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-left:2px solid #41626b;
+  border-bottom:2px solid #41626b;
+  background:#fff;
+}
+.bar-zone {
+  position:relative;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  min-width:0;
+}
+.bar-zone.editable {
+  cursor:ns-resize;
+  touch-action:none;
+}
+.bar-zone.editable:hover {
+  background:#cce7e833;
+}
+.bar-zone+.bar-zone {
+  border-left:1px dashed #dce9eb;
+}
+.bar {
+  height:var(--level,0%);
+  width:min(52%,105px);
+  position:relative;
+  z-index:1;
+  border-radius:.44rem .44rem 0 0;
+  pointer-events:none;
+  background:#0f6b78;
+}
+.bar-zone[data-bar="1"] .bar {
+  background:#ebae36;
+  box-shadow:inset 0 0 0 1px #a87314;
+}
+.bar[hidden] {
+  display:none;
+}
+.bar-label {
+  position:absolute;
+  bottom:var(--label-bottom,0%);
+  left:50%;
+  transform:translate(-50%,-.2rem);
+  z-index:2;
+  min-width:max-content;
+  max-width:100%;
+  font-size:.84rem;
+  font-weight:800;
+  padding:.12rem .36rem;
+  border-radius:.35rem;
+  background:#fff;
+  border:1px solid #d4e4e7;
+  color:var(--primary-dark);
+  pointer-events:none;
+}
+.plot-categories {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  text-align:center;
+  font-weight:800;
+  font-size:.91rem;
+}
+.chart-axis {
+  text-align:center;
+  color:var(--muted);
+  font-size:.87rem;
+  margin-top:.3rem;
+}
+.adjust {
+  border:1px solid #d7e8ea;
+  border-radius:.72rem;
+  padding:.7rem .8rem;
+}
+.adjust legend {
+  padding:0 .3rem;
+  color:var(--primary-dark);
+}
+.bar-controls {
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) 44px;
+  gap:.4rem;
+  align-items:center;
+}
+.bar-controls button {
+  padding:0;
+  font-size:1.35rem;
+}
+.bar-controls input[type=range] {
+  width:100%;
+  min-width:0;
+  min-height:44px;
+  accent-color:var(--primary);
+  margin:0;
+}
+.bar-output {
+  display:block;
+  text-align:center;
+  font-weight:750;
+}
+.no-data {
+  display:flex;
+  align-items:center;
+  gap:.42rem;
+  min-height:40px;
+  font-size:.91rem;
+}
+.no-data input {
+  width:1.08rem;
+  height:1.08rem;
+  accent-color:var(--primary);
+}
+.interpret-options {
+  display:grid;
+  gap:.5rem;
+  margin-top:.65rem;
+}
+.interpret-options .choice {
+  padding:.65rem .75rem;
+}
+.interpret-options .choice+.choice {
+  margin-top:0;
+}
+.review-list {
+  display:grid;
+  gap:.5rem;
+  list-style:none;
+  padding:0;
+  margin:.75rem 0 0;
+}
+.review-list li {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:.15rem .8rem;
+  padding:.6rem .7rem;
+  margin:0;
+  border:1px solid #dce8ea;
+  border-radius:.6rem;
+}
+.review-list p {
+  grid-column:1/-1;
+  font-size:.88rem;
+  color:var(--muted);
+}
+.mark {
+  font-weight:800;
+  font-size:.9rem;
+}
+.mark.good {
+  color:var(--ok);
+}
+.mark.bad {
+  color:var(--err);
+}
+.review-table td:nth-child(2),.review-table td:nth-child(3) {
+  font-variant-numeric:tabular-nums;
+}
+.footer {
+  border-top:1px solid var(--line);
+  padding:1rem 0 1.6rem;
+  font-size:.86rem;
+  color:var(--muted);
+}
+.footer .wrap {
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:.45rem;
+}
+.toast {
+  position:fixed;
+  z-index:6;
+  bottom:1rem;
+  left:50%;
+  width:max-content;
+  max-width:min(90vw,38rem);
+  transform:translateX(-50%);
+  background:var(--primary-dark);
+  color:#fff;
+  padding:.7rem 1rem;
+  border-radius:.7rem;
+  box-shadow:0 8px 28px #163e5150;
+  font-weight:650;
+  pointer-events:none;
+}
+.toast:empty {
+  display:none;
+}
+.toast.error {
+  background:#8a2630;
+}
+.print-only,.mobile-mass {
+  display:none;
+}
+.sr {
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
+@media(max-width:760px) {
+  .option-grid {
+    grid-template-columns:1fr;
+  }
+  .hero-grid {
+    grid-template-columns:minmax(0,1fr) minmax(120px,190px);
+    gap:1rem;
+  }
+  .nav-links .shortcut {
+    display:none;
+  }
+}
+@media(max-width:520px) {
+  .wrap {
+    width:calc(100% - 1.25rem);
+  }
+  .hero-grid {
+    grid-template-columns:1fr;
+  }
+  .hero-art {
+    display:none;
+  }
+  .hero {
+    padding:1.5rem 0;
+  }
+  .form-grid,.materials,.adjustments,.intro-grid {
+    grid-template-columns:1fr;
+  }
+  .nav-row {
+    gap:.35rem;
+  }
+  .nav-links a {
+    padding:.45rem .48rem;
+    font-size:.81rem;
+  }
+  .brand {
+    font-size:.71rem;
+  }
+  .data-table th,.data-table td,.review-table th,.review-table td {
+    padding:.42rem .35rem;
+    font-size:.86rem;
+  }
+  .data-table .unit-field {
+    grid-template-columns:minmax(0,1fr);
+  }
+  .data-table .unit-field small {
+    display:none;
+  }
+  .data-table .field input,.data-table .field select {
+    padding:.35rem .33rem;
+    font-size:16px;
+  }
+  .chart {
+    padding:.75rem .55rem;
+  }
+  .data-table,.data-table tbody {
+    display:block;
+  }
+  .data-table thead {
+    position:absolute;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+    clip-path:inset(50%);
+  }
+  .data-table tbody tr {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .data-table tbody th {
+    grid-column:1/-1;
+    background:#e1f0f1;
+  }
+  .data-table tbody th,.data-table tbody td {
+    padding:.38rem .5rem;
+  }
+  .mobile-mass {
+    display:block;
+    font-weight:750;
+    margin-bottom:.22rem;
+  }
+  .review-list li {
+    gap:.15rem .45rem;
+  }
+  .actions .btn {
+    flex-grow:1;
+  }
+}
+.cronometros {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));
+  gap:.7rem;
+  margin-top:.75rem;
+}
+.cronometro {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:.4rem;
+  padding:.85rem;
+  border:1px solid var(--line);
+  border-radius:.75rem;
+  background:var(--surface);
+}
+.cronometro p {
+  margin:0;
+}
+.cronometro-pantalla {
+  color:var(--primary-dark);
+  font-size:clamp(1.8rem,5vw,2.4rem);
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+  line-height:1.15;
+}
+.cronometro .actions {
+  margin-top:.15rem;
+}
+.cronometro-aviso {
+  color:var(--ok);
+  font-size:.9rem;
+  font-weight:750;
+}
+@media(prefers-reduced-motion:reduce) {
+  html {
+    scroll-behavior:auto;
+  }
+}
+@media print {
+  .print-only {
+    display:block;
+  }
+  * {
+    box-shadow:none!important;
+    print-color-adjust:exact;
+    -webkit-print-color-adjust:exact;
+  }
+  body {
+    background:white;
+    font-size:10pt;
+  }
+  .nav,.skip,.hero-art,.toast,.footer,.screen-only,button,#estado,#inicio,#materiales,#metodologia,#equipo,#variables,#datos,#grafica,#interpretacion {
+    display:none!important;
+  }
+  .hero {
+    color:#183743;
+    background:white;
+    padding:.3rem 0;
+  }
+  .hero h1 {
+    font-size:20pt;
+    max-width:none;
+  }
+  .hero-grid {
+    display:block;
+  }
+  .hero .kicker,.hero p:last-child {
+    color:#183743;
+  }
+  .meta span {
+    border:1px solid #ccc;
+  }
+  .wrap {
+    width:100%;
+  }
+  main.wrap {
+    padding:.3rem 0;
+    display:block;
+  }
+  .card {
+    border:0;
+    padding:0;
+  }
+  .chart,.review-table,.review-list li {
+    break-inside:avoid;
+  }
+  .plot-body {
+    grid-template-rows:135px auto;
+  }
+  .chart {
+    padding:.5rem;
+  }
+  .review-list li {
+    padding:.28rem .5rem;
+  }
+  .review-list {
+    gap:.28rem;
+  }
+}
+</style>
+<style id="integration-mobile">
+@media screen{
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.nav-row{flex-wrap:wrap}.nav-links{max-width:100%;min-width:0;margin-left:auto}
+#volver{min-height:44px}.cronometro button{min-height:44px}
+}
+@media screen and (max-width:1024px),screen and (pointer:coarse){
+input:not([type=radio]):not([type=checkbox]):not([type=range]),select{font-size:16px;min-height:44px}
+button,input[type=range]{min-height:44px}
+}
+@media screen and (max-width:380px){.nav-row{padding-block:.45rem}.brand{font-size:.65rem}#volver{font-size:.8rem;padding-inline:.4rem}.cronometro-controles{flex-wrap:wrap}section[id]{scroll-margin-top:7rem}}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<nav class="nav" aria-label="Navegación de la actividad">
+  <div class="wrap nav-row">
+    <a class="brand" href="#portada"><span>COLEGIO SANTA MARÍA</span><br>DEPARTAMENTO DE CIENCIAS</a>
+    <div class="nav-links">
+      <a class="shortcut" href="#metodologia">Metodología</a>
+      <a class="shortcut" href="#datos">Resultados</a>
+      <a id="volver" href="https://monikpmusik-gif.github.io/DECIMO/#actividades">← Volver al menú</a>
+    </div>
+  </div>
+</nav>
+<header id="portada" class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">Laboratorio interactivo</p>
+      <h1>Leyes de los gases ideales</h1>
+      <p>¿Qué pasa con el tamaño del globo cuando cambia la cantidad de bicarbonato?</p>
+      <div class="meta">
+        <span>Materia · Química</span><span>Profesora · Mónica Pérez</span><span>Curso · Décimo</span>
+        <span>32 minutos</span><span>4 integrantes</span>
+      </div>
+    </div>
+    <svg class="hero-art" viewBox="0 0 300 200" role="img" aria-label="Dos matraces Erlenmeyer con globos de diferente tamaño">
+      <defs><g id="hero-flask"><path d="M-12 0h24m-20 0v24l-23 42q-5 9 6 9h50q11 0 6-9L8 24V0" fill="#ffffff22" stroke="#d8f2f3" stroke-width="3" stroke-linejoin="round"/><path d="M-19 52h38l9 15q2 4-4 4h-48q-6 0-4-4Z" fill="#59c5cd"/><circle cx="-5" cy="58" r="2.5" fill="#fff5d0"/><circle cx="7" cy="48" r="2.7" fill="#fff5d0"/></g></defs>
+      <rect x="12" y="13" width="276" height="172" rx="30" fill="#ffffff12" stroke="#ffffff3b"/>
+      <path d="M35 164h230" stroke="#d6f2f38a" stroke-width="2"/>
+      <use href="#hero-flask" x="92" y="86"/><use href="#hero-flask" x="207" y="86"/>
+      <path d="M87 87v-6c-16-5-24-17-22-30 2-13 12-21 27-21s25 8 27 21c2 13-6 25-22 30v6Z" fill="#79d4d7" stroke="#dbf5f3" stroke-width="2"/>
+      <path d="M201 87v-6c-22-5-36-19-36-35 0-19 17-31 42-31s42 12 42 31c0 16-14 30-36 35v6Z" fill="#f2b84b" stroke="#ffe1a0" stroke-width="2"/>
+      <path d="M77 50q2-7 9-9m92 0q4-11 16-14" fill="none" stroke="#fff8e0" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+  </div>
+</header>
+<main id="contenido" class="wrap">
+  <noscript><p class="note error">Activen JavaScript para llenar, guardar y verificar esta práctica.</p></noscript>
+  <section class="card" id="estado" aria-label="Progreso">
+    <div class="progress-line"><strong>Avance del equipo</strong><span id="progreso-texto">0 de 5 etapas guardadas</span></div>
+    <progress id="progreso" value="0" max="5" aria-labelledby="progreso-texto"></progress>
+    <p class="intro-note">Usen un solo dispositivo por equipo. Cada sección queda bloqueada al guardarla y se conserva en este navegador. Al terminar, muéstrenle la entrega a la profesora.</p>
+    <p id="aviso-storage" class="note error" hidden>Este navegador bloqueó el guardado local. Los datos se conservan solo mientras esta pestaña siga abierta. Manténganla abierta y, al terminar, guarden una copia con el botón de impresión.</p>
+  </section>
+
+  <section class="card" id="equipo" aria-labelledby="titulo-equipo">
+    <div class="card-head"><div><p class="section-num">01 · Identificación</p><h2 id="titulo-equipo">Datos del equipo</h2></div><span class="tag" id="estado-equipo"></span></div>
+    <form id="form-equipo">
+      <fieldset id="campos-equipo">
+        <div class="form-grid">
+          <label class="field span">Curso <small>(incluyan el grupo)</small><input id="curso" type="text" required maxlength="24" placeholder="Ejemplo: 10A" autocomplete="off"></label>
+          <label class="field">Integrante 1<input id="integrante-1" type="text" required maxlength="80" placeholder="Nombre y apellido" autocomplete="off"></label>
+          <label class="field">Integrante 2<input id="integrante-2" type="text" required maxlength="80" placeholder="Nombre y apellido" autocomplete="off"></label>
+          <label class="field">Integrante 3<input id="integrante-3" type="text" required maxlength="80" placeholder="Nombre y apellido" autocomplete="off"></label>
+          <label class="field">Integrante 4<input id="integrante-4" type="text" required maxlength="80" placeholder="Nombre y apellido" autocomplete="off"></label>
+        </div>
+        <div class="actions"><button class="btn" id="guardar-equipo" type="submit">Guardar equipo</button></div>
+      </fieldset>
+      <p class="form-error" id="error-equipo" role="alert" hidden></p>
+      <p class="saved-text hint" id="siguiente-equipo" hidden>Equipo guardado. Lean la práctica y <a href="#variables">seleccionen las variables</a>.</p>
+    </form>
+  </section>
+
+  <section class="card" id="inicio" aria-labelledby="titulo-inicio">
+    <div class="card-head"><div><p class="section-num">Antes de experimentar</p><h2 id="titulo-inicio">Objetivos e hipótesis</h2></div></div>
+    <div class="intro-grid">
+      <div><h3>Objetivos</h3><p>Medir y graficar la circunferencia de dos globos inflados con CO₂. Relacionar lo observado con la ley de Avogadro y la ecuación <strong>PV = nRT</strong>.</p></div>
+      <div><h3>Hipótesis dada</h3><p><strong>Si</strong> usamos más bicarbonato con el mismo volumen de vinagre en exceso, <strong>entonces</strong> el globo tendrá una circunferencia mayor, <strong>porque</strong> se producirá más CO₂ y el gas ocupará más espacio en condiciones similares.</p></div>
+    </div>
+    <p class="hint">La ley de Avogadro predice que, a presión y temperatura constantes, más gas ocupa un mayor volumen. La circunferencia nos permite comparar el tamaño de los globos.</p>
+  </section>
+
+  <section class="card" id="variables" aria-labelledby="titulo-variables">
+    <div class="card-head"><div><p class="section-num">02 · Selección</p><h2 id="titulo-variables">Variables del ensayo</h2></div><span class="tag" id="estado-variables"></span></div>
+    <p>Elijan una opción por variable. Verán si cada selección es correcta y podrán revisarla antes de guardar.</p>
+    <form id="form-variables">
+      <fieldset id="campos-variables" disabled>
+        <div class="option-grid">
+          <fieldset class="choices"><legend>Independiente</legend><p class="fine">¿Qué cambian a propósito?</p>
+            <label class="choice"><input type="radio" name="independiente" value="vinagre" required><span>Volumen de vinagre</span></label>
+            <label class="choice"><input type="radio" name="independiente" value="bicarbonato"><span>Masa de bicarbonato</span></label>
+            <label class="choice"><input type="radio" name="independiente" value="circunferencia"><span>Circunferencia final del globo</span></label>
+            <label class="choice"><input type="radio" name="independiente" value="ambiente"><span>Temperatura del salón</span></label>
+            <p class="feedback" id="feedback-independiente" aria-live="polite" hidden></p>
+          </fieldset>
+          <fieldset class="choices"><legend>Dependiente</legend><p class="fine">¿Qué miden como resultado?</p>
+            <label class="choice"><input type="radio" name="dependiente" value="matraz" required><span>Capacidad del Erlenmeyer</span></label>
+            <label class="choice"><input type="radio" name="dependiente" value="bicarbonato"><span>Masa inicial de bicarbonato</span></label>
+            <label class="choice"><input type="radio" name="dependiente" value="circunferencia"><span>Circunferencia final del globo</span></label>
+            <label class="choice"><input type="radio" name="dependiente" value="vinagre"><span>Volumen inicial de vinagre</span></label>
+            <p class="feedback" id="feedback-dependiente" aria-live="polite" hidden></p>
+          </fieldset>
+          <fieldset class="choices"><legend>Controlada</legend><p class="fine">¿Qué mantienen igual?</p>
+            <label class="choice"><input type="radio" name="controlada" value="vinagre" required><span>Volumen de vinagre en cada matraz</span></label>
+            <label class="choice"><input type="radio" name="controlada" value="bicarbonato"><span>Masa de bicarbonato en cada globo</span></label>
+            <label class="choice"><input type="radio" name="controlada" value="circunferencia"><span>Circunferencia final de los globos</span></label>
+            <label class="choice"><input type="radio" name="controlada" value="co2"><span>Cantidad de CO₂ producido</span></label>
+            <p class="feedback" id="feedback-controlada" aria-live="polite" hidden></p>
+          </fieldset>
+        </div>
+        <div class="actions"><button class="btn" id="guardar-variables" type="submit">Guardar variables</button></div>
+      </fieldset>
+      <p class="form-error" id="error-variables" role="alert" hidden></p>
+      <p class="saved-text hint" id="siguiente-variables" hidden>Variables guardadas. Sigan la <a href="#metodologia">metodología</a> y registren sus resultados.</p>
+    </form>
+  </section>
+
+  <section class="card" id="materiales" aria-labelledby="titulo-materiales">
+    <div class="card-head"><div><p class="section-num">Preparación</p><h2 id="titulo-materiales">Materiales por equipo</h2></div></div>
+    <ul class="materials">
+      <li>2 matraces Erlenmeyer iguales de 250 mL.</li><li>2 globos redondos del mismo tamaño.</li>
+      <li>120 mL de vinagre blanco de 5 % de acidez.</li><li>2 porciones de bicarbonato puro de 1,5 g y 3,0 g.</li>
+      <li>1 probeta o medidor graduado.</li><li>1 embudo seco o cono de papel.</li>
+      <li>1 cinta métrica flexible y 1 marcador.</li><li>1 bandeja.</li>
+      <li>Colorante alimentario, opcional.</li>
+    </ul>
+    <p class="note"><strong>Seguridad.</strong> Usen gafas, trabajen sobre la bandeja y mantengan la cara lejos de la boca de los matraces. Usen solo los globos como cierre y respeten las cantidades indicadas.</p>
+  </section>
+
+  <section class="card" id="metodologia" aria-labelledby="titulo-metodologia">
+    <div class="card-head"><div><p class="section-num">Dos ensayos en paralelo</p><h2 id="titulo-metodologia">Metodología paso a paso</h2></div></div>
+    <p>Dos integrantes se encargan de un montaje cada una. La tercera controla el tiempo. La cuarta mide con ayuda de una compañera y registra los datos.</p>
+    <ol class="method">
+      <li><strong>Preparen los matraces.</strong> Rotulen uno «1,5 g» y el otro «3,0 g». Viertan 60 mL de vinagre en cada uno. Si usan colorante, agreguen una gota a cada matraz.</li>
+      <li><strong>Carguen los globos.</strong> Con el embudo seco, pasen cada porción de bicarbonato al globo que le corresponde. Ajusten el cuello de cada globo a la boca del matraz y déjenlo colgar a un lado para que el polvo todavía no caiga.</li>
+      <li><strong>Activen los ensayos al mismo tiempo.</strong> Levanten los globos para que el bicarbonato caiga sobre el vinagre. Cuando cese el burbujeo intenso en ambos matraces, esperen un minuto.
+        <div class="cronometros">
+          <div class="cronometro" data-cronometro aria-labelledby="tiempo-burbujeo" role="group">
+            <h3 id="tiempo-burbujeo">Tiempo de burbujeo</h3>
+            <p class="fine">Inicien el cronómetro al levantar los globos. Páusenlo cuando cese el burbujeo intenso en ambos matraces.</p>
+            <span class="cronometro-pantalla" role="timer" aria-label="Tiempo transcurrido">00:00</span>
+            <div class="actions">
+              <button class="btn" type="button" data-control disabled>Iniciar</button>
+              <button class="btn alt" type="button" data-reiniciar disabled>Reiniciar</button>
+            </div>
+          </div>
+          <div class="cronometro" data-cronometro data-segundos="60" aria-labelledby="tiempo-espera" role="group">
+            <h3 id="tiempo-espera">Un minuto antes de medir</h3>
+            <p class="fine">Inicien la cuenta regresiva cuando termine el burbujeo intenso en ambos matraces.</p>
+            <span class="cronometro-pantalla" role="timer" aria-label="Tiempo restante">01:00</span>
+            <div class="actions">
+              <button class="btn" type="button" data-control disabled>Iniciar</button>
+              <button class="btn alt" type="button" data-reiniciar disabled>Reiniciar</button>
+            </div>
+            <p class="cronometro-aviso" role="status"></p>
+          </div>
+        </div>
+      </li>
+      <li><strong>Midan sin retirar los globos.</strong> Rodeen la parte más ancha de cada globo sin apretar la cinta. Usen la misma cinta y la misma persona para las dos lecturas. Redondeen al centímetro más cercano.</li>
+      <li><strong>Registren lo que ocurrió.</strong> Anoten las medidas reales, incluso si son diferentes de lo esperado. Indiquen si un globo quedó sin inflar, se soltó o tuvo una fuga. Retírenlos al final según indique la profesora, limpien el puesto y lávense las manos.</li>
+    </ol>
+    <figure class="measure-figure">
+      <svg viewBox="0 0 88 94" role="img" aria-label="Cinta alrededor de la parte más ancha del globo">
+        <path d="M39 44h10v13l13 26q2 5-3 5H29q-5 0-3-5l13-26Z" fill="#e4f4f5" stroke="#0f6b78" stroke-width="2"/><path d="M31 77h26l4 8H27Z" fill="#70cdd2"/>
+        <path d="M39 45v-7c-12-3-17-12-16-19C24 9 32 4 44 4s20 5 21 15c1 7-4 16-16 19v7Z" fill="#f2b84b" stroke="#8a641e" stroke-width="2"/>
+        <path d="M19 23q25-12 50 0" fill="none" stroke="#0f6b78" stroke-width="2" stroke-dasharray="3 3"/><path d="M19 23q25 12 50 0" fill="none" stroke="#0f6b78" stroke-width="3"/>
+      </svg>
+      <figcaption>La cinta da una vuelta completa por la parte más ancha del globo. Esa lectura es la <strong>circunferencia en centímetros</strong>.</figcaption>
+    </figure>
+  </section>
+
+  <section class="card" id="datos" aria-labelledby="titulo-datos">
+    <div class="card-head"><div><p class="section-num">03 · Registro</p><h2 id="titulo-datos">Tabla de resultados</h2></div><span class="tag" id="estado-datos"></span></div>
+    <p>Registren las medidas que obtuvieron. Si hubo una fuga, señálenla aunque hayan alcanzado a medir.</p>
+    <form id="form-datos">
+      <fieldset id="campos-datos" disabled>
+        <table class="data-table" role="table">
+          <caption>Mediciones de los dos ensayos</caption>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Dato</th><th role="columnheader" scope="col" id="masa-0">1,5 g</th><th role="columnheader" scope="col" id="masa-1">3,0 g</th></tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row"><th role="rowheader" scope="row" id="dato-vinagre">Volumen de vinagre (mL)</th>
+              <td role="cell"><span class="mobile-mass" aria-hidden="true">1,5 g</span><label class="field unit-field"><input id="volumen-0" aria-labelledby="dato-vinagre masa-0" type="number" inputmode="decimal" min="0" max="250" step="0.1" required><small>mL</small></label></td>
+              <td role="cell"><span class="mobile-mass" aria-hidden="true">3,0 g</span><label class="field unit-field"><input id="volumen-1" aria-labelledby="dato-vinagre masa-1" type="number" inputmode="decimal" min="0" max="250" step="0.1" required><small>mL</small></label></td>
+            </tr>
+            <tr role="row"><th role="rowheader" scope="row" id="dato-circ">Circunferencia final (cm)</th>
+              <td role="cell"><span class="mobile-mass" aria-hidden="true">1,5 g</span><label class="field"><select id="inflado-0" aria-labelledby="dato-circ masa-0" required><option value="">Elijan</option><option value="medido">Medida tomada</option><option value="plano">Sin inflar</option><option value="faltante">Sin medida</option></select></label><label class="field unit-field circ" id="circ-campo-0" hidden><input id="circ-0" type="number" inputmode="numeric" min="1" max="150" step="1" aria-labelledby="dato-circ masa-0" placeholder="cm" disabled><small>cm</small></label></td>
+              <td role="cell"><span class="mobile-mass" aria-hidden="true">3,0 g</span><label class="field"><select id="inflado-1" aria-labelledby="dato-circ masa-1" required><option value="">Elijan</option><option value="medido">Medida tomada</option><option value="plano">Sin inflar</option><option value="faltante">Sin medida</option></select></label><label class="field unit-field circ" id="circ-campo-1" hidden><input id="circ-1" type="number" inputmode="numeric" min="1" max="150" step="1" aria-labelledby="dato-circ masa-1" placeholder="cm" disabled><small>cm</small></label></td>
+            </tr>
+            <tr role="row"><th role="rowheader" scope="row" id="dato-fuga">¿Se soltó el globo o hubo fuga?</th>
+              <td role="cell"><span class="mobile-mass" aria-hidden="true">1,5 g</span><label class="field"><select id="fuga-0" aria-labelledby="dato-fuga masa-0" required><option value="">Elijan</option><option value="no">No</option><option value="si">Sí</option></select></label></td>
+              <td role="cell"><span class="mobile-mass" aria-hidden="true">3,0 g</span><label class="field"><select id="fuga-1" aria-labelledby="dato-fuga masa-1" required><option value="">Elijan</option><option value="no">No</option><option value="si">Sí</option></select></label></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="actions"><button class="btn" id="guardar-datos" type="submit">Guardar tabla</button></div>
+      </fieldset>
+      <p class="form-error" id="error-datos" role="alert" hidden></p>
+      <p class="saved-text hint" id="siguiente-datos" hidden>Tabla guardada. <a href="#grafica">Construyan la gráfica</a> con las medidas registradas.</p>
+    </form>
+  </section>
+
+  <section class="card" id="grafica" aria-labelledby="titulo-grafica">
+    <div class="card-head"><div><p class="section-num">04 · Representación</p><h2 id="titulo-grafica">Gráfica de barras</h2></div><span class="tag" id="estado-grafica"></span></div>
+    <p>Coloquen cada barra sobre su dosis. Arrastren hacia arriba o hacia abajo en su columna, o ajusten la altura con los controles. Si una medición falta o hubo fuga, marquen <strong>Sin dato</strong> en esa dosis.</p>
+    <figure class="chart" id="grafica-visual" aria-describedby="resumen-grafica">
+      <figcaption class="chart-title">Circunferencia final del globo (cm)</figcaption>
+      <div class="plot-body" aria-hidden="true">
+        <div class="axis"></div>
+        <div class="plot" id="plot">
+          <div class="bar-zone" data-bar="0"><div class="bar"></div><span class="bar-label">—</span></div>
+          <div class="bar-zone" data-bar="1"><div class="bar"></div><span class="bar-label">—</span></div>
+        </div>
+        <span></span><div class="plot-categories"><span>1,5 g</span><span>3,0 g</span></div>
+      </div>
+      <p class="chart-axis">Masa de bicarbonato</p>
+      <p id="resumen-grafica" class="sr"></p>
+    </figure>
+    <form id="form-grafica">
+      <fieldset id="campos-grafica" disabled>
+        <div class="adjustments">
+          <fieldset class="adjust"><legend>Barra de 1,5 g</legend>
+            <div class="bar-controls"><button class="btn alt" type="button" data-adjust="0" data-change="-1" aria-label="Bajar la barra de 1,5 g un centímetro">−</button><input id="barra-0" type="range" min="0" max="60" value="0" step="1" aria-label="Altura de la barra de 1,5 g en centímetros"><button class="btn alt" type="button" data-adjust="0" data-change="1" aria-label="Subir la barra de 1,5 g un centímetro">+</button></div>
+            <output class="bar-output" id="valor-barra-0" for="barra-0">Por ajustar</output>
+            <label class="no-data"><input id="sin-dato-0" type="checkbox"> Sin dato para 1,5 g</label>
+          </fieldset>
+          <fieldset class="adjust"><legend>Barra de 3,0 g</legend>
+            <div class="bar-controls"><button class="btn alt" type="button" data-adjust="1" data-change="-1" aria-label="Bajar la barra de 3,0 g un centímetro">−</button><input id="barra-1" type="range" min="0" max="60" value="0" step="1" aria-label="Altura de la barra de 3,0 g en centímetros"><button class="btn alt" type="button" data-adjust="1" data-change="1" aria-label="Subir la barra de 3,0 g un centímetro">+</button></div>
+            <output class="bar-output" id="valor-barra-1" for="barra-1">Por ajustar</output>
+            <label class="no-data"><input id="sin-dato-1" type="checkbox"> Sin dato para 3,0 g</label>
+          </fieldset>
+        </div>
+        <div class="actions"><button class="btn" id="guardar-grafica" type="submit">Guardar gráfica</button></div>
+      </fieldset>
+      <p class="form-error" id="error-grafica" role="alert" hidden></p>
+      <p class="saved-text hint" id="siguiente-grafica" hidden>Gráfica guardada. <a href="#interpretacion">Seleccionen la interpretación</a>.</p>
+    </form>
+  </section>
+
+  <section class="card" id="interpretacion" aria-labelledby="titulo-interpretacion">
+    <div class="card-head"><div><p class="section-num">05 · Respuesta</p><h2 id="titulo-interpretacion">Interpretación de los resultados</h2></div><span class="tag" id="estado-interpretacion"></span></div>
+    <p>Elijan el análisis que coincide con sus datos. Si ambas medidas son válidas, consideren similares las que difieren en <strong>1 cm o menos</strong>.</p>
+    <form id="form-interpretacion">
+      <fieldset id="campos-interpretacion" disabled>
+        <div class="interpret-options">
+          <label class="choice"><input type="radio" name="analisis" value="A" required><span><strong>A. Los globos quedaron de tamaño similar.</strong> Las mediciones muestran una diferencia de 1 cm o menos. Con estos datos no se distingue un efecto de la cantidad de bicarbonato sobre el tamaño del globo.</span></label>
+          <label class="choice"><input type="radio" name="analisis" value="B"><span><strong>B. El globo de 3,0 g quedó más grande.</strong> La diferencia de más de 1 cm concuerda con que se produjo más CO₂ al agregar más bicarbonato al vinagre en exceso.</span></label>
+          <label class="choice"><input type="radio" name="analisis" value="C"><span><strong>C. El globo de 3,0 g quedó más pequeño por más de 1 cm o faltó una medida válida.</strong> Este ensayo no respalda la hipótesis. Revisar el montaje y repetir ayudaría a aclarar qué pasó.</span></label>
+        </div>
+        <div class="actions"><button class="btn" id="guardar-interpretacion" type="submit">Guardar interpretación</button></div>
+      </fieldset>
+      <p class="form-error" id="error-interpretacion" role="alert" hidden></p>
+      <p class="saved-text hint" id="siguiente-interpretacion" hidden>Interpretación guardada. <a href="#verificacion">Muestren la entrega a la profesora</a>.</p>
+    </form>
+  </section>
+
+  <section class="card" id="verificacion" aria-labelledby="titulo-verificacion">
+    <div class="card-head"><div><p class="section-num">Entrega · Uso docente</p><h2 id="titulo-verificacion">Verificación docente</h2></div><span class="tag screen-only" id="estado-verificacion">Pendiente</span></div>
+    <p id="instruccion-verificar" class="screen-only">El botón se habilita cuando el equipo guarda las cinco etapas.</p>
+    <div id="resumen-entrega" hidden>
+      <p id="entrega-equipo"></p>
+      <table class="review-table">
+        <caption>Registro guardado del equipo</caption>
+        <thead><tr><th scope="col">Dato</th><th scope="col">1,5 g</th><th scope="col">3,0 g</th></tr></thead>
+        <tbody id="entrega-tabla"></tbody>
+      </table>
+      <p class="hint" id="entrega-variables"></p>
+      <p class="hint" id="entrega-opcion"></p>
+      <p class="hint" id="entrega-fecha"></p>
+      <details class="screen-only"><summary class="stage-link">Ver la gráfica guardada</summary><div id="entrega-grafica"></div></details>
+      <div id="grafica-impresa" class="print-only"></div>
+    </div>
+    <div class="actions screen-only">
+      <button class="btn" id="verificar" type="button" disabled>Verificar entrega</button>
+      <button class="btn alt" id="imprimir" type="button" disabled>Imprimir o guardar PDF</button>
+    </div>
+    <div id="revision" hidden>
+      <p class="note ok" id="revision-resumen" tabindex="-1"></p>
+      <ul class="review-list" id="revision-detalle"></ul>
+      <p class="hint">La tabla se revisa frente al protocolo. Las circunferencias son mediciones experimentales y sirven de referencia para verificar la gráfica y la interpretación.</p>
+    </div>
+    <details class="screen-only hint">
+      <summary class="stage-link">Preparación para la profesora</summary>
+      <p>Prepare y rotule las porciones de bicarbonato. Pruebe previamente que los globos se ajusten a los matraces y que ambas dosis los inflen. Si los globos están rígidos, puede ablandarlos con una bomba manual y desinflarlos por completo antes de repartirlos.</p>
+      <p>Distribución sugerida de los 32 minutos. Preparación y variables, 5 min. Montaje y mediciones, 12 min. Gráfica e interpretación, 10 min. Entrega y limpieza, 5 min.</p>
+    </details>
+  </section>
+</main>
+<footer class="footer"><div class="wrap"><span>Colegio Santa María · Ciencias Naturales</span><span>Química 10° · Profesora Mónica Pérez</span></div></footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const stages = ["equipo", "variables", "datos", "grafica", "interpretacion"];
+  const titles = ["Datos del equipo", "Variables", "Tabla", "Gráfica", "Interpretación"];
+  const key = "csm-decimo-laboratorio-avogadro-v1";
+  const doses = ["1,5 g", "3,0 g"];
+  const variableKeys = {
+    independiente: "bicarbonato",
+    dependiente: "circunferencia",
+    controlada: "vinagre"
+  };
+  const indices = [0, 1];
+  const choices = ["A", "B", "C"];
+  const labels = {
+    independiente: ["Independiente", "La masa de bicarbonato es la que cambia."],
+    dependiente: ["Dependiente", "La circunferencia final del globo es lo que se mide."],
+    controlada: ["Controlada", "El volumen de vinagre se mantiene igual."]
+  };
+  const form = stage => $("form-" + stage);
+  const fields = stage => $("campos-" + stage);
+  const selected = (stage, name) => form(stage).querySelector('input[name="' + name + '"]:checked');
+  const options = (stage, name) => [...form(stage).querySelectorAll('input[name="' + name + '"]')];
+  const variableNames = Object.keys(variableKeys);
+  const format = new Intl.NumberFormat("es-CO");
+  const date = new Intl.DateTimeFormat("es-CO", { dateStyle: "medium", timeStyle: "short" });
+  const empty = () => ({ version: 1, steps: {}, verifiedAt: null });
+  let state = empty();
+  let storageAvailable = true;
+  let toastTimer;
+  let graphDraft = [undefined, undefined];
+  let graphScale = 60;
+  let activeDrag = null;
+
+  if (location.protocol === "file:") {
+    $("volver").href = "./Menu_Actividades_Quimica_Decimo.html#actividades";
+  }
+
+  function toast(message, error = false) {
+    clearTimeout(toastTimer);
+    $("toast").classList.toggle("error", error);
+    $("toast").textContent = message;
+    toastTimer = setTimeout(() => { $("toast").textContent = ""; }, 3700);
+  }
+
+  function warnStorage() {
+    storageAvailable = false;
+    $("aviso-storage").hidden = false;
+  }
+
+  function readStorage() {
+    if (!storageAvailable) return null;
+    try {
+      return decode(localStorage.getItem(key));
+    } catch {
+      warnStorage();
+      return null;
+    }
+  }
+
+  function decode(text) {
+    if (text === null) return null;
+    const data = JSON.parse(text);
+    if (!data || data.version !== 1 || !data.steps || typeof data.steps !== "object") {
+      throw new Error("Registro incompatible");
+    }
+    for (const [i, stage] of stages.entries()) {
+      const record = data.steps[stage];
+      if (record && (!valid[stage](record.value) || !Number.isFinite(record.time) ||
+          stages.slice(0, i).some(previous => !data.steps[previous]))) {
+        throw new Error("Registro inválido");
+      }
+    }
+    if (data.verifiedAt !== null && (!Number.isFinite(data.verifiedAt) || !data.steps.interpretacion)) {
+      throw new Error("Revisión inválida");
+    }
+    return data;
+  }
+
+  function store(next) {
+    state = next;
+    if (!storageAvailable) return;
+    try {
+      localStorage.setItem(key, JSON.stringify(next));
+    } catch {
+      warnStorage();
+    }
+  }
+
+  function mergeSaved() {
+    const incoming = readStorage();
+    if (!incoming) return;
+    if (stages.every(stage => !state.steps[stage] || incoming.steps[stage]) &&
+        (!state.verifiedAt || incoming.verifiedAt)) state = incoming;
+  }
+
+  function serialize(action) {
+    if (storageAvailable && navigator.locks && typeof navigator.locks.request === "function") {
+      return navigator.locks.request(key, action).catch(action);
+    }
+    return Promise.resolve(action());
+  }
+
+  const isText = (value, length) => typeof value === "string" && value.trim().length > 0 && value.length <= length;
+  const isCirc = value => Number.isInteger(value) && value >= 1 && value <= 150;
+  const valid = {
+    equipo: value => !!value && isText(value.curso, 24) &&
+      Array.isArray(value.integrantes) && value.integrantes.length === 4 &&
+      value.integrantes.every(name => isText(name, 80)),
+    variables: value => !!value && variableNames.every(name =>
+      options("variables", name).some(input => input.value === value[name])),
+    datos: value => Array.isArray(value) && value.length === 2 && value.every(trial =>
+      trial && Number.isFinite(trial.volumen) && trial.volumen >= 0 && trial.volumen <= 250 &&
+      ["si", "no"].includes(trial.fuga) && ["medido", "plano", "faltante"].includes(trial.inflado) &&
+      (trial.inflado === "medido" ? isCirc(trial.circ) : trial.circ === null)),
+    grafica: value => Array.isArray(value) && value.length === 2 &&
+      value.every(bar => bar === null || isCirc(bar)),
+    interpretacion: value => choices.includes(value)
+  };
+
+  const readInputs = {
+    equipo: () => ({
+      curso: $("curso").value.trim(),
+      integrantes: [1, 2, 3, 4].map(i => $("integrante-" + i).value.trim())
+    }),
+    variables: () => Object.fromEntries(variableNames.map(name => [name, selected("variables", name)?.value])),
+    datos: () => indices.map(i => {
+      const inflado = $("inflado-" + i).value;
+      return {
+        volumen: $("volumen-" + i).valueAsNumber,
+        inflado,
+        circ: inflado === "medido" ? $("circ-" + i).valueAsNumber : null,
+        fuga: $("fuga-" + i).value
+      };
+    }),
+    grafica: () => [...graphDraft],
+    interpretacion: () => selected("interpretacion", "analisis")?.value
+  };
+  const errorMessages = {
+    equipo: "Escriban el curso y el nombre de las cuatro integrantes.",
+    variables: "Seleccionen una opción para cada variable.",
+    datos: "Completen los datos de los dos ensayos.",
+    grafica: "Ajusten las dos barras a una altura mayor que cero o marquen «Sin dato» donde corresponda.",
+    interpretacion: "Seleccionen una de las tres interpretaciones."
+  };
+
+  function errorFor(stage, message = "") {
+    const area = $("error-" + stage);
+    area.textContent = message;
+    area.hidden = !message;
+  }
+
+  function available(stage) {
+    const index = stages.indexOf(stage);
+    return !state.steps[stage] && (index === 0 || !!state.steps[stages[index - 1]]);
+  }
+
+  for (const stage of stages) {
+    form(stage).addEventListener("input", () => errorFor(stage));
+    form(stage).addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!available(stage)) return;
+      const value = readInputs[stage]();
+      if (!valid[stage](value)) {
+        errorFor(stage, errorMessages[stage]);
+        return;
+      }
+      if (!window.confirm("Al guardar, esta sección quedará bloqueada. ¿Confirman que revisaron lo que ingresaron?")) return;
+      const saved = await serialize(() => {
+        mergeSaved();
+        if (!available(stage)) return false;
+        store({
+          ...state,
+          steps: { ...state.steps, [stage]: { value, time: Date.now() } }
+        });
+        return true;
+      });
+      render();
+      if (saved) {
+        toast("Sección guardada y bloqueada.");
+        const next = $("siguiente-" + stage);
+        next.tabIndex = -1;
+        next.focus({ preventScroll: true });
+      } else {
+        toast("Esta sección ya cambió en otra pestaña.", true);
+      }
+    });
+  }
+
+  function renderVariable(name) {
+    const value = selected("variables", name)?.value;
+    const good = value === variableKeys[name];
+    const feedback = $("feedback-" + name);
+    feedback.hidden = !value;
+    feedback.textContent = value ? (good ? "✓ Correcta" : "× Incorrecta. Revisen la selección.") : "";
+    feedback.className = "feedback " + (good ? "good" : "bad");
+  }
+
+  for (const name of variableNames) {
+    for (const input of options("variables", name)) input.addEventListener("change", () => renderVariable(name));
+  }
+
+  function updateCirc(i) {
+    const measured = $("inflado-" + i).value === "medido";
+    $("circ-campo-" + i).hidden = !measured;
+    $("circ-" + i).disabled = !measured || !available("datos");
+    $("circ-" + i).required = measured;
+  }
+  for (const i of indices) $("inflado-" + i).addEventListener("change", () => updateCirc(i));
+
+  const zones = [...$("plot").querySelectorAll(".bar-zone")];
+  const plot = $("plot");
+  const axis = document.querySelector(".axis");
+
+  function setScale() {
+    const readings = state.steps.datos?.value ?? [];
+    const newScale = Math.max(60, Math.ceil(Math.max(0, ...readings.map(trial => trial.circ ?? 0)) / 10) * 10);
+    if (newScale === graphScale && axis.childElementCount) return;
+    graphScale = newScale;
+    axis.replaceChildren();
+    plot.querySelectorAll(".grid-line").forEach(line => line.remove());
+    for (let height = 0; height <= graphScale; height += 10) {
+      const position = (height / graphScale * 100) + "%";
+      const tick = document.createElement("span");
+      tick.className = "axis-tick";
+      tick.style.setProperty("--position", position);
+      tick.textContent = height;
+      axis.append(tick);
+      const grid = document.createElement("span");
+      grid.className = "grid-line";
+      grid.style.setProperty("--position", position);
+      plot.prepend(grid);
+    }
+  }
+
+  function drawGraph() {
+    setScale();
+    const values = state.steps.grafica?.value ?? graphDraft;
+    for (const i of indices) {
+      const height = values[i];
+      const editable = available("grafica") && height !== null;
+      const percent = typeof height === "number" ? height / graphScale * 100 : 0;
+      const description = height === null ? "Sin dato" : height === undefined ? "Por ajustar" : height + " cm";
+      zones[i].classList.toggle("editable", editable);
+      zones[i].style.setProperty("--level", percent + "%");
+      zones[i].style.setProperty("--label-bottom", Math.min(percent, 92) + "%");
+      zones[i].querySelector(".bar").hidden = percent === 0;
+      zones[i].querySelector(".bar-label").textContent = height === undefined ? "—" : description;
+      $("valor-barra-" + i).textContent = description;
+      const slider = $("barra-" + i);
+      slider.max = graphScale;
+      slider.value = height ?? 0;
+      slider.disabled = !editable;
+      $("sin-dato-" + i).checked = height === null;
+      for (const button of form("grafica").querySelectorAll('[data-adjust="' + i + '"]')) button.disabled = !editable;
+    }
+    $("resumen-grafica").textContent = doses.map((dose, i) => {
+      const height = values[i];
+      return dose + ", " + (height === null ? "sin dato" : height === undefined ? "por ajustar" : height + " cm");
+    }).join(". ");
+  }
+
+  function setBar(i, height) {
+    if (!available("grafica")) return;
+    graphDraft[i] = height === null || height === undefined ? height : Math.max(0, Math.min(graphScale, height));
+    errorFor("grafica");
+    drawGraph();
+  }
+
+  function dragValue(event) {
+    const bounds = plot.getBoundingClientRect();
+    return Math.round((bounds.bottom - event.clientY) / bounds.height * graphScale);
+  }
+
+  for (const i of indices) {
+    $("barra-" + i).addEventListener("input", event => setBar(i, event.target.valueAsNumber));
+    $("sin-dato-" + i).addEventListener("change", event => setBar(i, event.target.checked ? null : undefined));
+    zones[i].addEventListener("pointerdown", event => {
+      if (!available("grafica") || graphDraft[i] === null || event.button !== 0 || activeDrag) return;
+      activeDrag = { i, pointer: event.pointerId };
+      zones[i].setPointerCapture(event.pointerId);
+      setBar(i, dragValue(event));
+    });
+    zones[i].addEventListener("pointermove", event => {
+      if (activeDrag?.pointer === event.pointerId && activeDrag.i === i) setBar(i, dragValue(event));
+    });
+    for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
+      zones[i].addEventListener(type, event => {
+        if (activeDrag?.pointer === event.pointerId) activeDrag = null;
+      });
+    }
+  }
+  for (const button of form("grafica").querySelectorAll("[data-adjust]")) {
+    button.addEventListener("click", () => {
+      const i = Number(button.dataset.adjust);
+      setBar(i, (graphDraft[i] ?? 0) + Number(button.dataset.change));
+    });
+  }
+
+  const chartValue = trial => trial.fuga === "no" && trial.inflado === "medido" ? trial.circ : null;
+
+  function expectedInterpretation(trials) {
+    const [first, second] = trials.map(chartValue);
+    if (first === null || second === null) return "C";
+    if (Math.abs(second - first) <= 1) return "A";
+    return second > first ? "B" : "C";
+  }
+
+  function mark(title, correct, explanation) {
+    const row = document.createElement("li");
+    const name = document.createElement("strong");
+    name.textContent = title;
+    const badge = document.createElement("span");
+    badge.className = "mark " + (correct ? "good" : "bad");
+    badge.textContent = correct ? "✓ Correcto" : "× Incorrecto";
+    const note = document.createElement("p");
+    note.textContent = explanation;
+    row.append(name, badge, note);
+    return row;
+  }
+
+  function judge() {
+    const vars = state.steps.variables.value;
+    const trials = state.steps.datos.value;
+    const graph = state.steps.grafica.value;
+    const interpretation = state.steps.interpretacion.value;
+    const marks = variableNames.map(name => ({
+      title: "Variable " + labels[name][0].toLowerCase(),
+      correct: vars[name] === variableKeys[name],
+      explanation: labels[name][1]
+    }));
+    marks.push({
+      title: "Tabla · Volumen de vinagre",
+      correct: trials.every(trial => trial.volumen === 60),
+      explanation: "El protocolo indica 60 mL en cada ensayo. Se guardaron " +
+        trials.map(trial => format.format(trial.volumen) + " mL").join(" y ") + "."
+    });
+    for (const i of indices) {
+      const expected = chartValue(trials[i]);
+      marks.push({
+        title: "Gráfica · " + doses[i],
+        correct: graph[i] === expected,
+        explanation: expected === null
+          ? "La tabla registra una fuga o una medida faltante. En esta dosis corresponde «Sin dato»."
+          : "La barra debe representar los " + expected + " cm registrados en la tabla."
+      });
+    }
+    const expected = expectedInterpretation(trials);
+    const reasons = {
+      A: "Las medidas válidas difieren en 1 cm o menos.",
+      B: "El globo de 3,0 g supera al de 1,5 g por más de 1 cm.",
+      C: trials.some(trial => chartValue(trial) === null)
+        ? "Falta al menos una medida válida para comparar los ensayos."
+        : "El globo de 3,0 g es más pequeño por más de 1 cm."
+    };
+    marks.push({
+      title: "Interpretación",
+      correct: interpretation === expected,
+      explanation: "Según la tabla, corresponde la opción " + expected + ". " + reasons[expected]
+    });
+    const correct = marks.filter(check => check.correct).length;
+    $("revision-detalle").replaceChildren(...marks.map(check => mark(check.title, check.correct, check.explanation)));
+    $("revision-resumen").textContent = correct + " de " + marks.length + " verificaciones correctas. " +
+      "Revisión registrada el " + date.format(state.verifiedAt) + ".";
+    $("revision-resumen").className = "note " + (correct === marks.length ? "ok" : "");
+  }
+
+  function cloneChart() {
+    const chart = $("grafica-visual").cloneNode(true);
+    chart.removeAttribute("id");
+    chart.removeAttribute("aria-describedby");
+    chart.querySelectorAll("[id]").forEach(node => node.removeAttribute("id"));
+    return chart;
+  }
+
+  function displaySummary() {
+    const team = state.steps.equipo.value;
+    const trials = state.steps.datos.value;
+    const graph = state.steps.grafica.value;
+    const variableSummary = variableNames.map(name => {
+      const saved = state.steps.variables.value[name];
+      const chosen = options("variables", name).find(input => input.value === saved);
+      return labels[name][0] + " · " + chosen.nextElementSibling.textContent;
+    });
+    $("entrega-equipo").textContent = "Curso " + team.curso + " · " + team.integrantes.join(", ");
+    $("entrega-variables").textContent = variableSummary.join(" / ");
+    const rows = [
+      ["Vinagre", ...trials.map(trial => format.format(trial.volumen) + " mL")],
+      ["Circunferencia", ...trials.map(trial => trial.inflado === "medido" ? trial.circ + " cm" :
+        trial.inflado === "plano" ? "Sin inflar" : "Sin medida")],
+      ["Globo suelto o fuga", ...trials.map(trial => trial.fuga === "si" ? "Sí" : "No")],
+      ["Barra guardada", ...graph.map(value => value === null ? "Sin dato" : value + " cm")]
+    ];
+    $("entrega-tabla").replaceChildren(...rows.map(row => {
+      const tr = document.createElement("tr");
+      row.forEach((text, i) => {
+        const cell = document.createElement(i === 0 ? "th" : "td");
+        if (i === 0) cell.scope = "row";
+        cell.textContent = text;
+        tr.append(cell);
+      });
+      return tr;
+    }));
+    $("entrega-opcion").textContent = "Interpretación elegida · Opción " + state.steps.interpretacion.value;
+    $("entrega-fecha").textContent = "Última etapa guardada el " + date.format(state.steps.interpretacion.time) + ".";
+    $("entrega-grafica").replaceChildren(cloneChart());
+    $("grafica-impresa").replaceChildren(cloneChart());
+  }
+
+  function render() {
+    const savedCount = stages.filter(stage => state.steps[stage]).length;
+    $("progreso").value = savedCount;
+    $("progreso-texto").textContent = savedCount + " de " + stages.length + " etapas guardadas";
+    for (const [i, stage] of stages.entries()) {
+      const saved = !!state.steps[stage];
+      const ready = available(stage);
+      fields(stage).disabled = !ready;
+      const badge = $("estado-" + stage);
+      badge.className = "tag" + (saved ? " saved" : ready ? " active" : "");
+      badge.textContent = saved ? "✓ Guardada" : ready ? "Por completar" : "Guarden " + titles[i - 1].toLowerCase();
+      $("guardar-" + stage).hidden = saved;
+      $("siguiente-" + stage).hidden = !saved;
+    }
+
+    const team = state.steps.equipo?.value;
+    if (team) {
+      $("curso").value = team.curso;
+      team.integrantes.forEach((name, i) => { $("integrante-" + (i + 1)).value = name; });
+    }
+    for (const name of variableNames) {
+      if (state.steps.variables) {
+        for (const input of options("variables", name)) input.checked = input.value === state.steps.variables.value[name];
+      }
+      renderVariable(name);
+    }
+    const trials = state.steps.datos?.value;
+    for (const i of indices) {
+      if (trials) {
+        $("volumen-" + i).value = trials[i].volumen;
+        $("inflado-" + i).value = trials[i].inflado;
+        $("fuga-" + i).value = trials[i].fuga;
+        $("circ-" + i).value = trials[i].circ ?? "";
+      }
+      updateCirc(i);
+    }
+    drawGraph();
+
+    const done = !!state.steps.interpretacion;
+    const checked = !!state.verifiedAt;
+    if (done) {
+      for (const input of options("interpretacion", "analisis")) input.checked = input.value === state.steps.interpretacion.value;
+      displaySummary();
+    }
+    $("resumen-entrega").hidden = !done;
+    $("instruccion-verificar").hidden = done;
+    $("verificar").disabled = !done || checked;
+    $("verificar").textContent = checked ? "Entrega verificada" : "Verificar entrega";
+    $("imprimir").disabled = !done;
+    $("estado-verificacion").className = "tag" + (checked ? " saved" : done ? " active" : "");
+    $("estado-verificacion").textContent = checked ? "✓ Verificada" : done ? "Lista para verificar" : "Pendiente";
+    $("revision").hidden = !checked;
+    if (checked) judge();
+  }
+
+  $("verificar").addEventListener("click", async () => {
+    await serialize(() => {
+      mergeSaved();
+      if (!state.steps.interpretacion || state.verifiedAt) return;
+      store({ ...state, verifiedAt: Date.now() });
+    });
+    render();
+    if (state.verifiedAt) $("revision-resumen").focus();
+  });
+  $("imprimir").addEventListener("click", () => window.print());
+
+  try {
+    state = readStorage() ?? state;
+    if (storageAvailable) {
+      const probe = key + "-test";
+      localStorage.setItem(probe, "1");
+      localStorage.removeItem(probe);
+    }
+  } catch {
+    warnStorage();
+  }
+
+  function refreshFromStorage() {
+    const previous = state;
+    mergeSaved();
+    if (state !== previous && (state.verifiedAt !== previous.verifiedAt ||
+        stages.some(stage => state.steps[stage]?.time !== previous.steps[stage]?.time))) render();
+  }
+
+  window.addEventListener("storage", event => { if (event.key === key) refreshFromStorage(); });
+  window.addEventListener("pageshow", refreshFromStorage);
+  window.addEventListener("focus", refreshFromStorage);
+  render();
+})();
+</script>
+<script>
+(() => {
+  "use strict";
+
+  for (const timer of document.querySelectorAll("[data-cronometro]")) {
+    const duration = Number(timer.dataset.segundos ?? 0) * 1000;
+    const display = timer.querySelector('[role="timer"]');
+    const status = timer.querySelector('[role="status"]');
+    const control = timer.querySelector("[data-control]");
+    const reset = timer.querySelector("[data-reiniciar]");
+    let elapsed = 0;
+    let started = null;
+    let interval;
+
+    function stopAt(time) {
+      elapsed = time;
+      started = null;
+      clearInterval(interval);
+    }
+
+    function renderTimer() {
+      let time = elapsed + (started === null ? 0 : Math.max(0, Date.now() - started));
+      if (duration && time >= duration) {
+        time = duration;
+        stopAt(time);
+      }
+
+      const complete = duration > 0 && time === duration;
+      const seconds = duration ? Math.ceil((duration - time) / 1000) : Math.floor(time / 1000);
+      const minutesText = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const secondsText = String(seconds % 60).padStart(2, "0");
+      const clockText = minutesText + ":" + secondsText;
+      const buttonText = started !== null ? "Pausar" : complete || !elapsed ? "Iniciar" : "Continuar";
+      const message = complete ? "Se cumplió el minuto. Ya pueden medir los globos." : "";
+
+      if (display.textContent !== clockText) display.textContent = clockText;
+      if (control.textContent !== buttonText) control.textContent = buttonText;
+      if (status && status.textContent !== message) status.textContent = message;
+      reset.disabled = started === null && !elapsed;
+    }
+
+    control.addEventListener("click", () => {
+      if (started !== null) {
+        stopAt(elapsed + Math.max(0, Date.now() - started));
+      } else {
+        if (duration && elapsed === duration) elapsed = 0;
+        started = Date.now();
+        interval = setInterval(renderTimer, 150);
+      }
+      renderTimer();
+    });
+    reset.addEventListener("click", () => {
+      stopAt(0);
+      renderTimer();
+    });
+    document.addEventListener("visibilitychange", renderTimer);
+    window.addEventListener("pageshow", renderTimer);
+    control.disabled = false;
+    renderTimer();
+  }
+})();
+</script>
+</body>
+</html>
